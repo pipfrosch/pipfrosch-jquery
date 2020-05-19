@@ -136,7 +136,7 @@ function pipfrosh_jquery_render_migrate() {
 function pipfrosh_jquery_render_cdn() {
   $cdn = get_option( 'pipfrosch_jquery_cdn', false );
   if ( ! is_bool( $cdn ) ) {
-    $cdn = true;
+    $cdn = false;
   }
   $checked = '';
   if ($cdn) {
