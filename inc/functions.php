@@ -129,7 +129,7 @@ function pipfrosh_jquery_render_migrate() {
   if ($migrate) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosh_jquery_migrate" value="true"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosh_jquery_migrate" id="pipfrosh_jquery_migrate" value="true"' . $checked . '>';
 }
 
 // render cdn
@@ -142,7 +142,7 @@ function pipfrosh_jquery_render_cdn() {
   if ($cdn) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosh_jquery_cdn" value="true"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosh_jquery_cdn" id="pipfrosh_jquery_cdn" value="true"' . $checked . '>';
 }
 
 // render sri
@@ -155,7 +155,7 @@ function pipfrosh_jquery_render_sri() {
   if ($sri) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosh_jquery_sri" value="true"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosh_jquery_sri" id="pipfrosh_jquery_sri" value="true"' . $checked . '>';
 }
 
 function pipfrosch_jquery_register_settings() {
@@ -200,14 +200,14 @@ function pipfrosch_jquery_register_settings() {
                       'pipfrosh_jquery_render_cdn',
                       'pipfrosch_jquery_options',
                       'pipfrosh_jquery_settings_form',
-                      array( 'label_for' => 'pipfrosh_jquery_migrate' ) );
+                      array( 'label_for' => 'pipfrosh_jquery_cdn' ) );
 
   add_settings_field( 'pipfrosh_jquery_sri',
                       'Use Subresource Integrity',
                       'pipfrosh_jquery_render_sri',
                       'pipfrosch_jquery_options',
                       'pipfrosh_jquery_settings_form',
-                      array( 'label_for' => 'pipfrosh_jquery_migrate' ) );
+                      array( 'label_for' => 'pipfrosh_jquery_sri' ) );
 }
 
 function pipfrosch_jquery_register_options_page() {
