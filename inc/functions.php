@@ -210,13 +210,13 @@ function pipfrosch_jquery_register_settings() {
                       array( 'label_for' => 'pipfrosh_jquery_migrate' ) );
 }
 
-//function pipfrosch_jquery_register_options_page() {
-//  add_options_page( 'jQuery ' . PIPJQV . ' Options',
-//                    'jQuery Options',
-//                    'manage_options',
-//                    'pipfrosch_jquery',
-//                    'pipfrosch_jquery_options_page' );
-//}
+function pipfrosch_jquery_register_options_page() {
+  add_options_page( 'jQuery ' . PIPJQV . ' Options',
+                    'jQuery Options',
+                    'manage_options',
+                    'pipfrosch_jquery',
+                    'pipfrosch_jquery_options_page' );
+}
 
 
 
