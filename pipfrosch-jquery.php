@@ -27,7 +27,8 @@ well. See the LICENSE file.
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-include_once(ABSPATH . 'wp-includes/pluggable.php');
+//include_once(ABSPATH . 'wp-includes/pluggable.php');
+include(ABSPATH . "wp-admin/includes/user.php.");
 
 define( "PIPFROSCH_JQUERY_PLUGIN_DIR", plugin_dir_path( __FILE__ ) );
 
