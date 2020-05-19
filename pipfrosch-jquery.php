@@ -26,6 +26,9 @@ well. See the LICENSE file.
 // I tried to follow the other WP coding rules.
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+include_once(ABSPATH . 'wp-includes/pluggable.php');
+
 define( "PIPFROSCH_JQUERY_PLUGIN_DIR", plugin_dir_path( __FILE__ ) );
 
 require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'versions.php' );
