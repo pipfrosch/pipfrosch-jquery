@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Pipfrosch jQuery
- * Plugin URI:        https://fubar.foobar
+ * Plugin URI:        https://github.com/pipfrosch/pipfrosch-jquery
  * Description:       Provides a modern jQuery environment for WordPress frontend
  * Tags:              jQuery
  * Version:           3.5.1pip0
@@ -11,6 +11,8 @@
  * Author URI:        https://pipfrosch.com/
  * License:           MIT
  * License URI:       https://opensource.org/licenses/MIT
+ * Text Domain:       pipfrosch-jquery
+ * Domain Path:       /languages
  */
 
 // WordPress says to use real tabs and not spaces. I effing hate real tabs. seriously hate them.
@@ -19,11 +21,12 @@
 //  by a tab character varies widely by text editor, some even using spaces when you hit the
 //  tab key. This file uses two spaces for each level of indentation. When you use tabs, files
 //  that end up being mixed spaces and tabs are common. When you only use spaces and do not
-//  use tabs, that does not happen.
-// I tried to follow the other coding rules, though a lot of them seem to have been written by
-//  ableists that do not understand all the unneeded spaces they want increase the odds of
-//  horizontal scrolling for those of us who need to use a large font size to see the fricken
-//  code and/or avoid the eye-fatigue that can lead to headaches or seizures.
+//  use tabs, that does not happen. If using spaces is a deal breaker I will use tabs but I
+//  really dislike them, my editors are smart and automatically indent so I would have to then
+//  reconfigure then to use tabs instead of spaces only when maintaining WP stuff because I do
+//  not use tabs elsewhere. I end up with mixed spaces and tabs when I try to use tabs.
+//
+// I tried to follow the other WP coding rules.
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
@@ -31,8 +34,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 // Use sha256 as it has not been broken and is smaller than sha384
 define( "PIPJQV", "3.5.1" );
 define( "PIPJQVSRI", "sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" );
-define( "PIPJQMTHREE", "3.3.0" );
-define( "PIPJQMTHREESRI", "sha256-wZ3vNXakH9k4P00fNGAlbN0PkpKSyhRa76IFy4V1PYE=" );
+define( "PIPJQMIGRATE", "3.3.0" );
+define( "PIPJQMIGRATESRI", "sha256-wZ3vNXakH9k4P00fNGAlbN0PkpKSyhRa76IFy4V1PYE=" );
 
 /* The following two functions are only used with the jQuery CDN.
    The first is used if SRI is enabled (recommended), the second
@@ -43,7 +46,7 @@ function pipfrosch_jquery_add_jquery_sri( $tag, $handle, $source ) {
       return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
       break;
     case 'jquery-migrate':
-      return '<script src="' . $source . '" integrity="' . PIPJQMTHREESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
+      return '<script src="' . $source . '" integrity="' . PIPJQMIGRATESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
   }
   return $tag;
 }
@@ -85,7 +88,7 @@ function pipfrosch_jquery_update_core_jquery() {
   wp_deregister_script( 'jquery-migrate' );
   wp_register_script( 'jquery-core', $path . 'jquery-' . PIPJQV . '.min.js', array(), null );
   if ( $migrate ) {
-    wp_register_script( 'jquery-migrate', $path . 'jquery-migrate-' . PIPJQMTHREE . '.min.js', array( 'jquery-core' ), null );
+    wp_register_script( 'jquery-migrate', $path . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js', array( 'jquery-core' ), null );
   }
   if ( $cdn ) {
     if ( $sri ) {

@@ -30,8 +30,8 @@ current version of jQuery. However you can disable compatibility completely if
 you desire.
 
 You may specify compatibility with jQuery 1.9 through 3.0. This is the default
-and provides compatibility with the version of jQuery that currently (5.4.1)
-ships in WordPress, which is version 1.12.4.
+and provides compatibility with the version of jQuery that currently (WP 5.4.1)
+ships in WordPress, which is version jQuery 1.12.4.
 
 If some jQuery scripts break even with the default compatibility mode, they are
 likely written for jQuery prior to 1.9. The only option is to not use this
@@ -86,4 +86,8 @@ the donate page if a new version of jQuery is out and I have not updated.
 For the included jQuery migration plugins, I am less likely to notice when new
 versions are available but I do check whenever a new version of jQuery itself is
 released. Again you can bug me if needed.
+
+== Translators ==
+Please fork https://github.com/pipfrosch/pipfrosch-jquery and make a pull
+request.
 
