@@ -4,7 +4,7 @@ if ( ! defined( 'PIPFROSCH_JQUERY_PLUGIN_DIR' ) ) { exit; }
 
 //sanitize plugin options before setting/updating them
 function pipfrosch_jquery_set_boolean_option( string $option, bool $value ) {
-  if (! is_string( $option ) {
+  if (! is_string( $option ) ) {
     return;
   }
   $stub = substr( $option, 0, 17);
