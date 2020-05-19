@@ -117,7 +117,7 @@ function pipfrosh_jquery_show_recommend() {
   echo ('<p>It is recommended that you enable the ‘Use Migrate Plugin’ option (default).</p>');
   echo ('<p>It is recommended that you enable the ‘Use Content Distribution Network’ option.</p>');
   echo ('<p>It is recommended that you enable the ‘Use Subresource Integrity’ option (default).</p>');
-  echo ('<p><abbr title="Content Distribution Network">CDN</abbr>: code.jquery.com</p>');
+  echo ('<p>Current <abbr title="Content Distribution Network">CDN</abbr>: code.jquery.com</p>');
 }
 
 // render migrate
