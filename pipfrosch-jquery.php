@@ -39,48 +39,48 @@ define( "PIPJQMTHREESRI", "sha256-wZ3vNXakH9k4P00fNGAlbN0PkpKSyhRa76IFy4V1PYE=" 
 /* The following two functions are only used with the jQuery CDN.
    The first is used if SRI is enabled (recommended), the second
    if SRI is disabled */
-function pipfrosch-jquery_add_jquery_sri( $tag, $handle, $source ) {
+function pipfrosch_jquery_add_jquery_sri( $tag, $handle, $source ) {
   switch( $handle ) {
     case 'jquery-core':
-      return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>';
+      return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
       break;
     case 'jquery-deprecated':
-      return '<script src="' . $source . '" integrity="' . PIPJQMONESRI . '" crossorigin="anonymous"></script>';
+      return '<script src="' . $source . '" integrity="' . PIPJQMONESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
       break;
     case 'jquery-migrate':
-      return = '<script src="' . $source . '" integrity="' . PIPJQMTHREESRI . '" crossorigin="anonymous"></script>';
+      return '<script src="' . $source . '" integrity="' . PIPJQMTHREESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
   }
   return $tag;
 }
-function pipfrosch-jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
+function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
   switch( $handle ) {
     case 'jquery-core':
     case 'jquery-deprecated':
-    case 'jquery-migeate':
-      return '<script src="' . $source . '" crossorigin="anonymous"></script>';
+    case 'jquery-migrate':
+      return '<script src="' . $source . '" crossorigin="anonymous"></script>' . PHP_EOL;
   }
   return $tag;
 }
 
-function pipfrosch-jquery_update_core_jquery() {
+function pipfrosch_jquery_update_core_jquery() {
   //according to https://codex.wordpress.org/Writing_a_Plugin add_option does nothing if an option already exists; so...
-  add_option( 'pipfrosch-jquery-compat', '1' );
-  add_option( 'pipfrosch-jquery-cdn', 'false' );
-  add_option( 'pipfrosch-jquery-sri','true' );
-  $option = get_option( 'pipfrosch-jquery-compat' );
+  add_option( 'pipfrosch_jquery_compat', '1' );
+  add_option( 'pipfrosch_jquery_cdn', 'false' );
+  add_option( 'pipfrosch_jquery_sri','true' );
+  $option = get_option( 'pipfrosch_jquery_compat' );
   if ( ! is_numeric( $option ) ) {
     //reset to default
-    update_option( 'pipfrosch-jquery-compat', '1' );
+    update_option( 'pipfrosch_jquery_compat', '1' );
     $option = 1;
   }
   $level = intval( $option );
   $cdn = false;
-  $option = trim( strtolower( get_option( 'pipfrosch-jquery-cdn' ) ) );
+  $option = trim( strtolower( get_option( 'pipfrosch_jquery_cdn' ) ) );
   if ( $option === "true" ) {
     $cdn = true;
   }
   $sri = true;
-  $option = trim( strtolower( get_option( 'pipfrosch-jquery-sri' ) ) );
+  $option = trim( strtolower( get_option( 'pipfrosch_jquery_sri' ) ) );
   if ( $option === "false" ) {
     $sri = false;
   }
@@ -100,17 +100,17 @@ function pipfrosch-jquery_update_core_jquery() {
   }
   if ( $cdn ) {
     if ( $sri ) {
-      add_filter( 'script_loader_tag', 'pipfrosch-jquery_add_jquery_sri', 10, 3 );
+      add_filter( 'script_loader_tag', 'pipfrosch_jquery_add_jquery_sri', 10, 3 );
     } else {
-      add_filter( 'script_loader_tag', 'pipfrosch-jquery_add_jquery_crossorigin', 10, 3 );
+      add_filter( 'script_loader_tag', 'pipfrosch_jquery_add_jquery_crossorigin', 10, 3 );
     }
   }
 }
 
 // do not include dot files in plugin zip archive
 // if created, this file is deleted by uninstall.php
-function pipfrosch-jquery_set_expires_header() {
-  $htaccess = dirname( __FILE__ ) . ".htaccess";
+function pipfrosch_jquery_set_expires_header() {
+  $htaccess = dirname( __FILE__ ) . "/.htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
     return;
@@ -123,15 +123,13 @@ function pipfrosch-jquery_set_expires_header() {
     $contents .= '  </FilesMatch>' . PHP_EOL;
     $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
     file_put_contents($htaccess, $contents);
-    }
   }
   return;
 }
-register_activation_hook( __FILE__, 'pipfrosch-jquery_set_expires_header' );
+register_activation_hook( __FILE__, 'pipfrosch_jquery_set_expires_header' );
 
 /* do not mess with jQuery if on admin pages */
 if ( ! is_admin() ) {
-  add_action( 'wp_enqueue_scripts', 'pipfrosch-jquery_update_core_jquery' );
+  add_action( 'wp_enqueue_scripts', 'pipfrosch_jquery_update_core_jquery' );
 }
 
-?>
