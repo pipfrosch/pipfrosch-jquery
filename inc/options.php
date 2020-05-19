@@ -2,7 +2,6 @@
 // currently broken
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-//if ( ! current_user_can( 'administrator' ) ) { exit; }
 
 function pipfrosch_jquery_options_page() {
 ?>
