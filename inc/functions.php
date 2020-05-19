@@ -112,6 +112,52 @@ function pipfrosch_jquery_set_expires_header() {
 
 //settings
 
+// the callback for add_settings_section
+function pipfrosh_jquery_show_recommend() {
+  echo ('<p>It is recommended that you enable the ‘Use Migrate Plugin’ option (default).</p>');
+  echo ('<p>It is recommended that you enable the ‘Use Content Distribution Network’ option.</p>');
+  echo ('<p>It is recommended that you enable the ‘Use Subresource Integrity’ option (default).</p>');
+}
+
+// render migrate
+function pipfrosh_jquery_render_migrate() {
+  $migrate = get_option( 'pipfrosch_jquery_migrate', true );
+  if ( ! is_bool( $migrate ) ) {
+    $migrate = true;
+  }
+  $checked = '';
+  if ($migrate) {
+    $checked = ' checked="checked"';
+  }
+  echo '<input type="checkbox" name="pipfrosh_jquery_migrate" value="true"' . $checked . '>';
+}
+
+// render cdn
+function pipfrosh_jquery_render_cdn() {
+  $cdn = get_option( 'pipfrosch_jquery_cdn', false );
+  if ( ! is_bool( $cdn ) ) {
+    $cdn = true;
+  }
+  $checked = '';
+  if ($cdn) {
+    $checked = ' checked="checked"';
+  }
+  echo '<input type="checkbox" name="pipfrosh_jquery_cdn" value="true"' . $checked . '>';
+}
+
+// render sri
+function pipfrosh_jquery_render_sri() {
+  $sri = get_option( 'pipfrosch_jquery_sri', true );
+  if ( ! is_bool( $sri ) ) {
+    $sri = true;
+  }
+  $checked = '';
+  if ($sri) {
+    $checked = ' checked="checked"';
+  }
+  echo '<input type="checkbox" name="pipfrosh_jquery_sri" value="true"' . $checked . '>';
+}
+
 function pipfrosch_jquery_register_settings() {
   add_option( 'pipfrosch_jquery_migrate' );
   add_option( 'pipfrosch_jquery_cdn' );
@@ -137,6 +183,31 @@ function pipfrosch_jquery_register_settings() {
                           'sanitize_callback' => 'rest_sanitize_boolean',
                           'show_in_rest' => false,
                           'default' => true ) );
+  add_settings_section( 'pipfrosh_jquery_settings_form',
+                        'Plugin Options',
+                        'pipfrosh_jquery_show_recommend',
+                        'pipfrosch_jquery_options' );
+
+  add_settings_field( 'pipfrosh_jquery_migrate',
+                      'Use Migrate Plugin',
+                      'pipfrosh_jquery_render_migrate',
+                      'pipfrosch_jquery_options',
+                      'pipfrosh_jquery_settings_form',
+                      array('label_for' => 'pipfrosh_jquery_migrate' ) );
+
+  add_settings_field( 'pipfrosh_jquery_cdn',
+                      'Use Content Distribution Network',
+                      'pipfrosh_jquery_render_cdn',
+                      'pipfrosch_jquery_options',
+                      'pipfrosh_jquery_settings_form',
+                      array( 'label_for' => 'pipfrosh_jquery_migrate' ) );
+
+  add_settings_field( 'pipfrosh_jquery_sri',
+                      'Use Subresource Integrity',
+                      'pipfrosh_jquery_render_sri',
+                      'pipfrosch_jquery_options',
+                      'pipfrosh_jquery_settings_form',
+                      array( 'label_for' => 'pipfrosh_jquery_migrate' ) );
 }
 
 function pipfrosch_jquery_register_options_page() {

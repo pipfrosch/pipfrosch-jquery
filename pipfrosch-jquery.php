@@ -42,6 +42,7 @@ require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'inc/functions.php' );
 require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'inc/options.php' );
 
 register_activation_hook( __FILE__, 'pipfrosch_jquery_set_expires_header' );
+
 add_action( 'admin_init', 'pipfrosch_jquery_register_settings' );
 add_action( 'admin_menu', 'pipfrosch_jquery_register_options_page' );
 
