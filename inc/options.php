@@ -18,7 +18,7 @@ function pipfrosch_jquery_options_page() {
     <h2>Pipfrosch jQuery Plugin Management</h2>
     <p>jQuery Version: <?php echo PIPJQV; ?></p>
     <p>jQuery Migrate Plugin Version: <?php echo PIPJQMIGRATE; ?></p>
-    <p>Current <abbr title="Content Distribution Network">CDN</abbr>: <?php echo $cdnhost . ' ' . echo $parenthesis;?></p>
+    <p>Current <abbr title="Content Distribution Network">CDN</abbr>: <?php echo $cdnhost . ' ' . $parenthesis;?></p>
     <form method="post" action="options.php">
 <?php
 settings_fields( 'pipfrosch_jquery_options' );
