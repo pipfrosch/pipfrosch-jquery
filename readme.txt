@@ -1,5 +1,5 @@
 === Pipfrosch jQuery ===
-Contributors: PipfroschPress
+Contributors: pipfroschpress
 Tags: jQuery
 Donate link: https://pipfrosch.com/donate
 Requires at least: 4.1.0
