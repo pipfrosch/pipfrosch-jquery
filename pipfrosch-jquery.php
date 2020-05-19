@@ -15,6 +15,12 @@
  * Domain Path:       /languages
  */
 
+/*
+Pipfrosch jQuery is basically just jQuery with some PHP to make it easy to replace the version
+that is shipped as part of WordPress itself. jQuery is MIT license, and so this plugin is as
+well. See the LICENSE file.
+*/
+
 // WordPress says to use real tabs and not spaces. I effing hate real tabs. seriously hate them.
 //  The claim that real tabs allow flexibility across clients is a fracking lie. What do they
 //  mean by clients anyway? Code is done with a text editor, not a client. And the space used
