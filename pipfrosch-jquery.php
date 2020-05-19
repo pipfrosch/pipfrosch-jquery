@@ -31,8 +31,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 // Use sha256 as it has not been broken and is smaller than sha384
 define( "PIPJQV", "3.5.1" );
 define( "PIPJQVSRI", "sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" );
-define( "PIPJQMONE", "1.4.1" );
-define( "PIPJQMONESRI", "sha256-SOuLUArmo4YXtXONKz+uxIGSKneCJG4x0nVcA0pFzV0=" );
 define( "PIPJQMTHREE", "3.3.0" );
 define( "PIPJQMTHREESRI", "sha256-wZ3vNXakH9k4P00fNGAlbN0PkpKSyhRa76IFy4V1PYE=" );
 
@@ -44,9 +42,6 @@ function pipfrosch_jquery_add_jquery_sri( $tag, $handle, $source ) {
     case 'jquery-core':
       return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
       break;
-    case 'jquery-deprecated':
-      return '<script src="' . $source . '" integrity="' . PIPJQMONESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
-      break;
     case 'jquery-migrate':
       return '<script src="' . $source . '" integrity="' . PIPJQMTHREESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
   }
@@ -55,7 +50,6 @@ function pipfrosch_jquery_add_jquery_sri( $tag, $handle, $source ) {
 function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
   switch( $handle ) {
     case 'jquery-core':
-    case 'jquery-deprecated':
     case 'jquery-migrate':
       return '<script src="' . $source . '" crossorigin="anonymous"></script>' . PHP_EOL;
   }
@@ -64,16 +58,14 @@ function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
 
 function pipfrosch_jquery_update_core_jquery() {
   //according to https://codex.wordpress.org/Writing_a_Plugin add_option does nothing if an option already exists; so...
-  add_option( 'pipfrosch_jquery_compat', '1' );
+  add_option( 'pipfrosch_jquery_migrate', 'true' );
   add_option( 'pipfrosch_jquery_cdn', 'false' );
   add_option( 'pipfrosch_jquery_sri','true' );
-  $option = get_option( 'pipfrosch_jquery_compat' );
-  if ( ! is_numeric( $option ) ) {
-    //reset to default
-    update_option( 'pipfrosch_jquery_compat', '1' );
-    $option = 1;
+  $migrate = true;
+  $option = trim( strtolower( get_option( 'pipfrosch_jquery_migrate' ) ) );
+  if ( $migrate === "false" ) {
+    $migrate = false;
   }
-  $level = intval( $option );
   $cdn = false;
   $option = trim( strtolower( get_option( 'pipfrosch_jquery_cdn' ) ) );
   if ( $option === "true" ) {
@@ -92,10 +84,7 @@ function pipfrosch_jquery_update_core_jquery() {
   wp_deregister_script( 'jquery-core' );
   wp_deregister_script( 'jquery-migrate' );
   wp_register_script( 'jquery-core', $path . 'jquery-' . PIPJQV . '.min.js', array(), null );
-  if ( $level === 2 ) {
-    wp_register_script( 'jquery-deprecated', $path . 'jquery-migrate-' . PIPJQMONE . '.min.js', array( 'jquery-core' ), null );
-    wp_register_script( 'jquery-migrate', $path . 'jquery-migrate-' . PIPJQMTHREE . '.min.js', array( 'jquery-core', 'jquery-deprecated' ), null );
-  } elseif ( $level === 1 ) {
+  if ( $migrate ) {
     wp_register_script( 'jquery-migrate', $path . 'jquery-migrate-' . PIPJQMTHREE . '.min.js', array( 'jquery-core' ), null );
   }
   if ( $cdn ) {
@@ -110,7 +99,7 @@ function pipfrosch_jquery_update_core_jquery() {
 // do not include dot files in plugin zip archive
 // if created, this file is deleted by uninstall.php
 function pipfrosch_jquery_set_expires_header() {
-  $htaccess = dirname( __FILE__ ) . "/.htaccess";
+  $htaccess = trailingslashit( dirname( __FILE__ ) ) . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
     return;

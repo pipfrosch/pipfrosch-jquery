@@ -33,12 +33,12 @@ You may specify compatibility with jQuery 1.9 through 3.0. This is the default
 and provides compatibility with the version of jQuery that currently (5.4.1)
 ships in WordPress, which is version 1.12.4.
 
-If some jQuery scripts break even with the default compatibility mode, you can
-specify deprecated compatibility mode, which provides compatibility for jQuery
-that predates jQuery 1.9.
+If some jQuery scripts break even with the default compatibility mode, they are
+likely written for jQuery prior to 1.9. The only option is to not use this
+plugin until you have upgraded that very old code.
 
-If you have a plugin or theme that requires the deprecated mode, it is highly
-recommended you update that code as soon as possible.
+It is highly recommended you update that code as soon as possible, whether or
+not you plan to use this plugin.
 
 Please note that WordPress has loaded jQuery by default for years, this results
 in many plugins and themes using it when they really did not need to because

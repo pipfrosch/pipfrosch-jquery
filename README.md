@@ -3,6 +3,12 @@ Pipfrosch jQuery
 
 Plugin for modern jQuery in WordPress.
 
+__DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
+
+This github is for developing the plugin. When it is ready, right way to
+install will be through the WordPress plugin installer where only tested
+releases will exist.
+
 Originally my `piptheme` WordPress theme that is __not__ distributed through
 WordPress contained an updated jQuery. I decided that was the wrong way to go
 about it.
