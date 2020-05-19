@@ -35,96 +35,14 @@ well. See the LICENSE file.
 // I tried to follow the other WP coding rules.
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+define( "PIPFROSCH_JQUERY_PLUGIN_DIR", plugin_dir_path( __FILE__ ) );
 
-// When updating versions be sure to update the SRI string.
-// Use sha256 as it has not been broken and is smaller than sha384
-define( "PIPJQV", "3.5.1" );
-define( "PIPJQVSRI", "sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" );
-define( "PIPJQMIGRATE", "3.3.0" );
-define( "PIPJQMIGRATESRI", "sha256-wZ3vNXakH9k4P00fNGAlbN0PkpKSyhRa76IFy4V1PYE=" );
+require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'versions.php' );
+require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'inc/functions.php' );
 
-/* The following two functions are only used with the jQuery CDN.
-   The first is used if SRI is enabled (recommended), the second
-   if SRI is disabled */
-function pipfrosch_jquery_add_jquery_sri( $tag, $handle, $source ) {
-  switch( $handle ) {
-    case 'jquery-core':
-      return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
-      break;
-    case 'jquery-migrate':
-      return '<script src="' . $source . '" integrity="' . PIPJQMIGRATESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
-  }
-  return $tag;
-}
-function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
-  switch( $handle ) {
-    case 'jquery-core':
-    case 'jquery-migrate':
-      return '<script src="' . $source . '" crossorigin="anonymous"></script>' . PHP_EOL;
-  }
-  return $tag;
-}
-
-function pipfrosch_jquery_update_core_jquery() {
-  //according to https://codex.wordpress.org/Writing_a_Plugin add_option does nothing if an option already exists; so...
-  add_option( 'pipfrosch_jquery_migrate', 'true' );
-  add_option( 'pipfrosch_jquery_cdn', 'false' );
-  add_option( 'pipfrosch_jquery_sri','true' );
-  $migrate = true;
-  $option = trim( strtolower( get_option( 'pipfrosch_jquery_migrate' ) ) );
-  if ( $migrate === "false" ) {
-    $migrate = false;
-  }
-  $cdn = false;
-  $option = trim( strtolower( get_option( 'pipfrosch_jquery_cdn' ) ) );
-  if ( $option === "true" ) {
-    $cdn = true;
-  }
-  $sri = true;
-  $option = trim( strtolower( get_option( 'pipfrosch_jquery_sri' ) ) );
-  if ( $option === "false" ) {
-    $sri = false;
-  }
-  if ($cdn) {
-    $path = 'https://code.jquery.com/';
-  } else {
-    $path = trailingslashit( dirname( __FILE__ ) );
-  }
-  wp_deregister_script( 'jquery-core' );
-  wp_deregister_script( 'jquery-migrate' );
-  wp_register_script( 'jquery-core', $path . 'jquery-' . PIPJQV . '.min.js', array(), null );
-  if ( $migrate ) {
-    wp_register_script( 'jquery-migrate', $path . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js', array( 'jquery-core' ), null );
-  }
-  if ( $cdn ) {
-    if ( $sri ) {
-      add_filter( 'script_loader_tag', 'pipfrosch_jquery_add_jquery_sri', 10, 3 );
-    } else {
-      add_filter( 'script_loader_tag', 'pipfrosch_jquery_add_jquery_crossorigin', 10, 3 );
-    }
-  }
-}
-
-// do not include dot files in plugin zip archive
-// if created, this file is deleted by uninstall.php
-function pipfrosch_jquery_set_expires_header() {
-  $htaccess = trailingslashit( dirname( __FILE__ ) ) . ".htaccess";
-  if ( file_exists( $htaccess ) ) {
-    // do not overwrite if already exists
-    return;
-  }
-  if ( is_writeable( __DIR__ ) ) {
-    $contents  = '<IfModule mod_expires.c>' . PHP_EOL;
-    $contents .= '  ExpiresActive On' . PHP_EOL;
-    $contents .= '  <FilesMatch "\.min\.js">' . PHP_EOL;
-    $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
-    $contents .= '  </FilesMatch>' . PHP_EOL;
-    $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
-    file_put_contents($htaccess, $contents);
-  }
-  return;
-}
 register_activation_hook( __FILE__, 'pipfrosch_jquery_set_expires_header' );
+add_action( 'admin_init', 'pipfrosch_jquery_register_settings' );
+add_action( 'admin_menu', 'pipfrosch_jquery_register_options_page' );
 
 /* do not mess with jQuery if on admin pages */
 if ( ! is_admin() ) {
