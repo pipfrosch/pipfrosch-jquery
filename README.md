@@ -6,6 +6,8 @@ __UNTESTED MAJOR CHANGE SINCE LAST COMMIT__
 
 Plugin for modern jQuery in WordPress.
 
+Also just noticed `PIPFROSCH_JQUERY_PLUGIN_DIR` is wrong so its borked at moment.
+
 __DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
 
 This github is for developing the plugin. When it is ready, right way to
