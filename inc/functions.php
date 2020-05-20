@@ -72,6 +72,43 @@ function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
   return '<script src="' . $source . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
 }
 
+function pipfrosch_jquery_source( string $cdnhost="localhost" ) {
+  $rs = new stdClass();
+  switch( $cdnhost ) {
+    case 'jQuery.com CDN':
+      $rs->jquery  = 'https://code.jquery.com/jquery-' . PIPJQV . '.min.js';
+      $rs->migrate = 'https://code.jquery.com/jquery-migrate-' . PIPJQMIGRATE . '.min.js';
+      $rs->cdn = true;
+      break;
+    case 'Microsoft CDN':
+      $rs->jquery  = 'https://ajax.aspnetcdn.com/ajax/jQuery/jquery-' . PIPJQV . '.min.js';
+      $rs->migrate = 'https://ajax.aspnetcdn.com/ajax/jquery.migrate/jquery-migrate-' . PIPJQMIGRATE . '.min.js';
+      $rs->cdn = true;
+      break;
+    case 'jsDelivr CDN':
+      $rs->jquery  = 'https://cdn.jsdelivr.net/npm/jquery@' . PIPJQV . '/dist/jquery.min.js';
+      $rs->migrate = 'https://cdn.jsdelivr.net/npm/jquery-migrate@' . PIPJQMIGRATE . '/dist/jquery-migrate.min.js';
+      $rs->cdn = true;
+      break;
+    case 'CloudFlare CDNJS':
+      $rs->jquery  = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/' . PIPJQV . '/jquery.min.js';
+      $rs->migrate = 'https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/' . PIPJQMIGRATE . '/jquery-migrate.min.js';
+      $rs->cdn = true;
+      break;
+    // Google seems to only have core, not migrate, so use jquery.com for migrate with them
+    case 'Google CDN':
+      $rs->jquery =  'https://ajax.googleapis.com/ajax/libs/jquery/' . PIPJQV . '/jquery.min.js';
+      $rs->migrate = 'https://code.jquery.com/jquery-migrate-' . PIPJQMIGRATE . '.min.js';
+      $rs->cdn = true;
+      break;
+    default:
+      $rs->jquery  = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js';
+      $rs->migrate = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js';
+      $rs->cdn = false;
+  }
+  return $rs;
+}
+
 // defines the included jQuery to be served
 function pipfrosch_jquery_update_core_jquery() {
   //get the settings and validate
@@ -90,20 +127,23 @@ function pipfrosch_jquery_update_core_jquery() {
     $sri = true;
     pipfrosch_jquery_set_boolean_option( 'pipfrosch_jquery_sri', true );
   }
+  $cdnhost = 'localhost';
+  if ($cdn) {
+    $cdnhost = get_option( 'pipfrosch_jquery_cdnhost', 'jQuery.com CDN' );
+  }
+  if (! is_string( $cdnhost ) ) {
+    $cdnhost = 'localhost';
+  }
+  $srcuri = pipfrosch_jquery_source( $cdnhost );
 
   //act on options
-  if ($cdn) {
-    $path = 'https://code.jquery.com/';
-  } else {
-    $path = PIPFROSCH_JQUERY_PLUGIN_WEBPATH;
-  }
   wp_deregister_script( 'jquery-core' );
   wp_deregister_script( 'jquery-migrate' );
-  wp_register_script( 'jquery-core', $path . 'jquery-' . PIPJQV . '.min.js', array(), null );
+  wp_register_script( 'jquery-core', $srcuri->jquery, array(), null );
   if ( $migrate ) {
-    wp_register_script( 'jquery-migrate', $path . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js', array( 'jquery-core' ), null );
+    wp_register_script( 'jquery-migrate', $srcuri->migrate, array( 'jquery-core' ), null );
   }
-  if ( $cdn ) {
+  if ( $srcuri->cdn ) {
     if ( $sri ) {
       add_filter( 'script_loader_tag', 'pipfrosch_jquery_add_jquery_sri', 10, 3 );
     } else {
@@ -132,6 +172,26 @@ function pipfrosch_jquery_set_expires_header() {
 }
 
 //settings
+
+// the callback to sanitize cdnhost string
+function pipfrosch_press_sanitize_cdnhost( $input ) {
+  $input = strtolower( sanitize_text_field( $input ) );
+  switch( $input ) {
+    case 'microsoft cdn':
+      return 'Microsoft CDN';
+      break;
+    case 'jsdelivr cdn':
+      return 'jsDelivr CDN';
+      break;
+    case 'cloudflare cdnjd':
+      return 'CloudFlare CDNJS';
+      break;
+    case 'google cdn':
+      return 'Google CDN';
+      break;
+  }
+  return 'jQuery.com CDN';
+}
 
 // the callback for add_settings_section
 function pipfrosh_jquery_show_recommend() {
@@ -184,27 +244,36 @@ function pipfrosch_jquery_register_settings() {
   add_option( 'pipfrosch_jquery_migrate' );
   add_option( 'pipfrosch_jquery_cdn' );
   add_option( 'pipfrosch_jquery_sri' );
+  add_option( 'pipfrosch_jquery_cdnhost' )
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_migrate',
-                    array('type' => 'boolean',
-                          'description' => 'Load jQuery migrate ' . PIPJQMIGRATE  . ' plugin',
-                          'sanitize_callback' => 'rest_sanitize_boolean',
-                          'show_in_rest' => false,
-                          'default' => true ) );
+                    array( 'type' => 'boolean',
+                           'description' => 'Load jQuery migrate ' . PIPJQMIGRATE  . ' plugin',
+                           'sanitize_callback' => 'rest_sanitize_boolean',
+                           'show_in_rest' => false,
+                           'default' => true ) );
   register_setting( 'pipfrosh_jquery_options',
                     'pipfrosch_jquery_cdn',
-                    array('type' => 'boolean',
-                          'description' => 'Use code.jqeery.com CDN for jQuery',
-                          'sanitize_callback' => 'rest_sanitize_boolean',
-                          'show_in_rest' => false,
-                          'default' => false ) );
+                    array( 'type' => 'boolean',
+                           'description' => 'Use code.jqeery.com CDN for jQuery',
+                           'sanitize_callback' => 'rest_sanitize_boolean',
+                           'show_in_rest' => false,
+                           'default' => false ) );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_sri',
-                    array('type' => 'boolean',
-                          'description' => 'Use Subresource Integrity when using jQuery CDN',
-                          'sanitize_callback' => 'rest_sanitize_boolean',
-                          'show_in_rest' => false,
-                          'default' => true ) );
+                    array( 'type' => 'boolean',
+                           'description' => 'Use Subresource Integrity when using jQuery CDN',
+                           'sanitize_callback' => 'rest_sanitize_boolean',
+                           'show_in_rest' => false,
+                           'default' => true ) );
+  register_setting( 'pipfrosch_jquery_options',
+                    'pipfrosch_jquery_cdnhost',
+                    array( 'type' => 'string';
+                           'description' => 'Which CDN service to use',
+                           'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost',
+                           'show_in_rest' => false,
+                           'default' => 'jQuery.com CDN' ) );
+
   add_settings_section( 'pipfrosh_jquery_settings_form',
                         'Plugin Options',
                         'pipfrosh_jquery_show_recommend',

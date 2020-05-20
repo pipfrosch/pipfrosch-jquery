@@ -13,7 +13,11 @@ function pipfrosch_jquery_options_page() {
     $parenthesis = '(enabled)';
   }
   // right now only one option
-  $cdnhost = 'code.jquery.com';
+  //$cdnhost = 'code.jquery.com';
+  $cdnhost = get_option( 'pipfrosch_jquery_cdnhost', 'jQuery.com CDN' );
+  $s = array( '/CDN$/' , '/CDNJS/' );
+  $r = array( '<abbr>CDN</abbr>' , '<abbr>CDNJS</abbr>' );
+  $cdnhost = preg_replace($s, $r, $cdnhost);
 ?>
     <h2>Pipfrosch jQuery Plugin Management</h2>
     <p>jQuery Version: <?php echo PIPJQV; ?></p>
