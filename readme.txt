@@ -30,16 +30,16 @@ If you know you do not need the jQuery Migrate plugin, you can disable that.
 The updated jQuery will not replace the core jQuery for administration pages.
 This is to avoid potential breakage of administrative pages.
 
-=== Compatibility Options ===
+= Migrate Option =
 You may disable compatibility with scripts that require older versions of
 jQuery. This is not recommended. Plugins and themes and quite possibly WP Core
 scripts that use jQuery may require features that are no longer supported in the
 current version of jQuery. However you can disable compatibility completely if
-you desire.
+you desire by disabling the jQuery Migrate plugin.
 
-You may specify compatibility with jQuery 1.9 through 3.0. This is the default
-and provides compatibility with the version of jQuery that currently (WP 5.4.1)
-ships in WordPress, which is version jQuery 1.12.4.
+The jQuery Migrate plugin provides compatibility with jQuery 1.9 through 3.0.
+It is enabled by default and provides compatibility with the version of jQuery
+that currently (WP 5.4.1) ships in WordPress, which is version jQuery 1.12.4.
 
 If some jQuery scripts break even with the default compatibility mode, they are
 likely written for jQuery prior to 1.9. The only option is to not use this
@@ -58,7 +58,7 @@ makes more sense than continuing to use jQuery and when using jQuery really is
 the best approach. In other words, do not hire me, I pretty much only use jQuery
 but that is not always the right approach even if it is the convenient approach.
 
-=== CDN OPTIONS ===
+= CDN OPTIONS =
 By default, the updated jQuery scripts are served from within this WordPress
 plugin. This is because responsible plugin and theme developers do not (in my
 opinion) utilize third party resources by default.
@@ -81,7 +81,7 @@ You can optionally turn that off. The only logical reason for turning it off
 would be if you already have a plugin that adds SRI tags to scripts. In that
 case, it is redundant to have this plugin run a filter that adds them as well.
 
-=== Public CDN Notes ===
+= Public CDN Notes =
 
 As of May 20th, 2020 the following note apply.
 
