@@ -1,6 +1,9 @@
 Pipfrosch jQuery
 ================
 
+__UNTESTED MAJOR CHANGE SINCE LAST COMMIT__
+(fallback code for if CDN fails)
+
 Plugin for modern jQuery in WordPress.
 
 __DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__

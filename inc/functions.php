@@ -29,26 +29,47 @@ function pipfrosch_jquery_set_boolean_option( string $option, bool $value ) {
   update_option( $option, boolval( $value ) );
 }
 
+/* provide fallback if jQuery does not load from CDN */
+function pipfrosh_jquery_fallback( $core = true ) {
+  $html = '<script>' . PHP_EOL . '  // Fallback to load locally if CDN fails' . PHP_EOL;
+  if ($core) {
+    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_DIR . 'jquery-' . PIPJQV . '.min.js"></script>\'));' . PHP_EOL;
+  } else {
+    $html .= '  if (typeof jQuery.migrateWarnings == \'undefined\') {' . PHP_EOL;
+    $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_DIR . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"></script>\');' . PHP_EOL;
+    $html .= '  }' . PHP_EOL;
+  }
+  $html .= '</script>' . PHP_EOL;
+  return $html;
+}
+
 /* The following two functions are only used with the jQuery CDN.
    The first is used if SRI is enabled (recommended), the second
    if SRI is disabled */
 function pipfrosch_jquery_add_jquery_sri( $tag, $handle, $source ) {
   switch( $handle ) {
     case 'jquery-core':
-      return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
+      $html = pipfrosh_jquery_fallback();
+      return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
       break;
     case 'jquery-migrate':
-      return '<script src="' . $source . '" integrity="' . PIPJQMIGRATESRI . '" crossorigin="anonymous"></script>' . PHP_EOL;
+      $html = pipfrosh_jquery_fallback( false );
+      return '<script src="' . $source . '" integrity="' . PIPJQMIGRATESRI . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
   }
   return $tag;
 }
 function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
   switch( $handle ) {
     case 'jquery-core':
+      $html = pipfrosh_jquery_fallback();
+      break;
     case 'jquery-migrate':
-      return '<script src="' . $source . '" crossorigin="anonymous"></script>' . PHP_EOL;
+      $html = pipfrosh_jquery_fallback( false );
+      break;
+    default:
+      return $tag;
   }
-  return $tag;
+  return '<script src="' . $source . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
 }
 
 // defines the included jQuery to be served
