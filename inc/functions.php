@@ -64,7 +64,7 @@ function pipfrosch_jquery_getstring_cdnhost() {
 
 // the callback to sanitize checkbox string - currently broken
 function pipfrosch_press_sanitize_checkbox( $input ) {
-  error_log( var_dump($input) );
+  error_log( $input );
   $input = sanitize_text_field( $input );
   if ( is_numeric( $input ) ) {
     $num = intval( $input );
