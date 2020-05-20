@@ -33,13 +33,13 @@ function pipfrosch_jquery_set_boolean_option( string $option, bool $value ) {
 function pipfrosh_jquery_fallback( $core = true ) {
   $html = '<script>' . PHP_EOL . '  // Fallback to load locally if CDN fails' . PHP_EOL;
   if ($core) {
-    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"></script>\'));' . PHP_EOL;
+    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"><\/script>\'));' . PHP_EOL;
   } else {
     $html .= '  if (typeof jQuery.migrateWarnings == \'undefined\') {' . PHP_EOL;
-    $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"></script>\');' . PHP_EOL;
+    $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"><\/script>\');' . PHP_EOL;
     $html .= '  }' . PHP_EOL;
   }
-  $html .= '<\/script>' . PHP_EOL;
+  $html .= '</script>' . PHP_EOL;
   return $html;
 }
 
@@ -128,7 +128,7 @@ function pipfrosch_jquery_update_core_jquery() {
     pipfrosch_jquery_set_boolean_option( 'pipfrosch_jquery_sri', true );
   }
   $cdnhost = 'localhost';
-  if ($cdn) {
+  if ( $cdn ) {
     $cdnhost = get_option( 'pipfrosch_jquery_cdnhost', 'jQuery.com CDN' );
   }
   if (! is_string( $cdnhost ) ) {
