@@ -3,10 +3,10 @@ Pipfrosch jQuery
 
 Plugin for modern jQuery in WordPress.
 
-__DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
-
 Current Status
 --------------
+
+Pre-submission cleanup work is now taking place in the branch pipjq.
 
 Options page is created and working. Microsoft CDN still does not current
 versions of either jQuery or the migrate plugin. All the other CDNs have
