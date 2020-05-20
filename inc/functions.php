@@ -127,13 +127,15 @@ function pipfrosch_jquery_update_core_jquery() {
     $sri = true;
     pipfrosch_jquery_set_boolean_option( 'pipfrosch_jquery_sri', true );
   }
-  $cdnhost = 'localhost';
   if ( $cdn ) {
-    $cdnhost = get_option( 'pipfrosch_jquery_cdnhost', 'jQuery.com CDN' );
-  }
-  if (! is_string( $cdnhost ) ) {
+    $cdnhost = get_option( 'pipfrosch_jquery_cdnhost' );
+    if (! is_string( $cdnhost ) ) {
+      $cdnhost = 'jQuery.com CDN';
+    }
+  } else {
     $cdnhost = 'localhost';
   }
+  
   $srcuri = pipfrosch_jquery_source( $cdnhost );
 
   //act on options

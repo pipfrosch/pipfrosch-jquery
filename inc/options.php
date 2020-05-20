@@ -14,7 +14,7 @@ function pipfrosch_jquery_options_page() {
   }
   // right now only one option
   //$cdnhost = 'code.jquery.com';
-  $cdnhost = get_option( 'pipfrosch_jquery_cdnhost', 'jQuery.com CDN' );
+  $cdnhost = pipfrosch_press_sanitize_cdnhost( get_option( 'pipfrosch_jquery_cdnhost' ) );
   $s = array( '/CDN$/' , '/CDNJS/' );
   $r = array( '<abbr>CDN</abbr>' , '<abbr>CDNJS</abbr>' );
   $cdnhost = preg_replace($s, $r, $cdnhost);
