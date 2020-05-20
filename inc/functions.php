@@ -175,6 +175,17 @@ function pipfrosch_jquery_set_expires_header() {
 
 //settings
 
+// the callback to sanitize checkbox string - currently broken
+function pipfrosch_press_sanitize_checkbox( $input ) {
+  if ( is_numeric( $input ) ) {
+    $num = intval( $input );
+    if ( $num === 1 ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // the callback to sanitize cdnhost string
 function pipfrosch_press_sanitize_cdnhost( $input ) {
   $input = strtolower( sanitize_text_field( $input ) );
@@ -213,7 +224,7 @@ function pipfrosh_jquery_render_migrate() {
   if ($migrate) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosh_jquery_migrate" id="pipfrosh_jquery_migrate" value="true"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosh_jquery_migrate" id="pipfrosh_jquery_migrate" value="1"' . $checked . '>';
 }
 
 // render cdn
@@ -226,7 +237,7 @@ function pipfrosh_jquery_render_cdn() {
   if ($cdn) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosh_jquery_cdn" id="pipfrosh_jquery_cdn" value="true"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosh_jquery_cdn" id="pipfrosh_jquery_cdn" value="1"' . $checked . '>';
 }
 
 // render sri
@@ -239,7 +250,7 @@ function pipfrosh_jquery_render_sri() {
   if ($sri) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosh_jquery_sri" id="pipfrosh_jquery_sri" value="true"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosh_jquery_sri" id="pipfrosh_jquery_sri" value="1"' . $checked . '>';
 }
 
 function pipfrosch_jquery_register_settings() {
@@ -251,21 +262,21 @@ function pipfrosch_jquery_register_settings() {
                     'pipfrosch_jquery_migrate',
                     array( 'type' => 'boolean',
                            'description' => 'Load jQuery migrate ' . PIPJQMIGRATE  . ' plugin',
-                           'sanitize_callback' => 'rest_sanitize_boolean',
+                           'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox',
                            'show_in_rest' => false,
                            'default' => true ) );
   register_setting( 'pipfrosh_jquery_options',
                     'pipfrosch_jquery_cdn',
                     array( 'type' => 'boolean',
                            'description' => 'Use code.jqeery.com CDN for jQuery',
-                           'sanitize_callback' => 'rest_sanitize_boolean',
+                           'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox',
                            'show_in_rest' => false,
                            'default' => false ) );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_sri',
                     array( 'type' => 'boolean',
                            'description' => 'Use Subresource Integrity when using jQuery CDN',
-                           'sanitize_callback' => 'rest_sanitize_boolean',
+                           'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox',
                            'show_in_rest' => false,
                            'default' => true ) );
   register_setting( 'pipfrosch_jquery_options',
