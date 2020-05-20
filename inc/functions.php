@@ -1,6 +1,6 @@
 <?php
 
-if ( ! defined( 'PIPFROSCH_JQUERY_PLUGIN_WEBPATH' ) ) { exit; }
+if ( ! defined( 'PIPJQ_PLUGIN_WEBPATH' ) ) { exit; }
 
 // boolean options are stored by plugin as strings in options API
 //  this function always returns a boolean and "fixes" the options value
@@ -50,14 +50,14 @@ function pipfrosch_press_sanitize_cdnhost( $input ) {
 // returns the CDN host and sets it if it is not set
 function pipfrosch_jquery_getstring_cdnhost() {
   $default = pipfrosch_press_sanitize_cdnhost( 'use default' );
-  $test = get_option( 'pipfrosch_jquery_cdnhost' );
+  $test = get_option( 'pipjq_cdnhost' );
   if (! is_string ( $test ) ) {
-    add_option( 'pipfrosch_jquery_cdnhost', $default );
+    add_option( 'pipjq_cdnhost', $default );
     return $default;
   }
   $clean = pipfrosch_press_sanitize_cdnhost( $test );
   if ( $clean !== $test ) {
-    update_option( 'pipfrosch_jquery_cdnhost', $clean );
+    update_option( 'pipjq_cdnhost', $clean );
   }
   return $clean;
 }
@@ -76,9 +76,9 @@ function pipfrosch_press_sanitize_checkbox( $input ) {
 
 /* initiate options */
 function pipfrosch_jquery_initiate_options() {
-  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
-  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
-  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
+  $foo = pipfrosch_jquery_getas_boolean( 'pipjq_migrate' );
+  $foo = pipfrosch_jquery_getas_boolean( 'pipjq_cdn', false );
+  $foo = pipfrosch_jquery_getas_boolean( 'pipjq_sri' );
   $foo = pipfrosch_jquery_getstring_cdnhost();
 }
 
@@ -86,10 +86,10 @@ function pipfrosch_jquery_initiate_options() {
 function pipfrosch_jquery_fallback( $core = true ) {
   $html = '<script>' . PHP_EOL . '  // Fallback to load locally if CDN fails' . PHP_EOL;
   if ($core) {
-    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"><\/script>\'));' . PHP_EOL;
+    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPJQ_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"><\/script>\'));' . PHP_EOL;
   } else {
     $html .= '  if (typeof jQuery.migrateWarnings == \'undefined\') {' . PHP_EOL;
-    $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"><\/script>\');' . PHP_EOL;
+    $html .= '    document.write(\'<script src="' . PIPJQ_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"><\/script>\');' . PHP_EOL;
     $html .= '  }' . PHP_EOL;
   }
   $html .= '</script>' . PHP_EOL;
@@ -155,19 +155,19 @@ function pipfrosch_jquery_source( string $cdnhost="localhost" ) {
       $rs->cdn = true;
       break;
     default:
-      $rs->jquery  = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js';
-      $rs->migrate = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js';
+      $rs->jquery  = PIPJQ_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js';
+      $rs->migrate = PIPJQ_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js';
       $rs->cdn = false;
   }
   return $rs;
 }
 
 // defines the included jQuery to be served
-function pipfrosch_jquery_update_core_jquery() {
+function pipjq_update_wpcore_jquery() {
   //get the settings and validate
-  $migrate = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
-  $cdn     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
-  $sri     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
+  $migrate = pipfrosch_jquery_getas_boolean( 'pipjq_migrate' );
+  $cdn     = pipfrosch_jquery_getas_boolean( 'pipjq_cdn', false );
+  $sri     = pipfrosch_jquery_getas_boolean( 'pipjq_sri' );
   $cdnhost = 'localhost';
   if ( $cdn ) {
     $cdnhost = pipfrosch_jquery_getstring_cdnhost();
@@ -190,9 +190,9 @@ function pipfrosch_jquery_update_core_jquery() {
 }
 
 // initiated options and creates the .htaccess file. I do not like including a .htaccess within a plugin zip archive.
-function pipfrosch_jquery_set_expires_header() {
+function pipjq_activation() {
   pipfrosch_jquery_initiate_options();
-  $htaccess = PIPFROSCH_JQUERY_PLUGIN_DIR . ".htaccess";
+  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
     return;
@@ -220,22 +220,22 @@ function cbfn_pipfrosch_jquery_add_settings_section() {
 
 // render migrate
 function pipfrosch_jquery_render_migrate() {
-  $migrate = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
+  $migrate = pipfrosch_jquery_getas_boolean( 'pipjq_migrate' );
   $checked = '';
   if ($migrate) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosch_jquery_migrate" id="pipfrosch_jquery_migrate" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipjq_migrate" id="pipjq_migrate" value="1"' . $checked . '>';
 }
 
 // render cdn
 function pipfrosch_jquery_render_cdn() {
-  $cdn = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
+  $cdn = pipfrosch_jquery_getas_boolean( 'pipjq_cdn', false );
   $checked = '';
   if ($cdn) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosch_jquery_cdn" id="pipfrosch_jquery_cdn" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipjq_cdn" id="pipjq_cdn" value="1"' . $checked . '>';
 }
 
 // render cdnhost
@@ -246,7 +246,7 @@ function pipfrosch_jquery_render_cdnhost() {
                   'jsDelivr CDN',
                   'Microsoft CDN',
                   'Google CDN');
-  $html = '<select name="pipfrosch_jquery_cdnhost" id="pipfrosch_jquery_cdnhost">' . PHP_EOL;
+  $html = '<select name="pipjq_cdnhost" id="pipjq_cdnhost">' . PHP_EOL;
   foreach($values as $value) {
     $selected = '';
     if ($cdnhost === $value) {
@@ -260,16 +260,16 @@ function pipfrosch_jquery_render_cdnhost() {
 
 // render sri
 function pipfrosch_jquery_render_sri() {
-  $sri = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
+  $sri = pipfrosch_jquery_getas_boolean( 'pipjq_sri' );
   $checked = '';
   if ($sri) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosch_jquery_sri" id="pipfrosch_jquery_sri" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipjq_sri" id="pipjq_sri" value="1"' . $checked . '>';
 }
 
 function cbfn_pipfrosch_jquery_options_page() {
-  $cdn = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
+  $cdn = pipfrosch_jquery_getas_boolean( 'pipjq_cdn', false );
   $parenthesis = '(disabled)';
   if ( $cdn ) {
     $parenthesis = '(enabled)';
@@ -284,63 +284,63 @@ function cbfn_pipfrosch_jquery_options_page() {
   $html .= '    <p>Current <abbr title="Content Distribution Network">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
   $html .= '    <form method="post" action="options.php">' . PHP_EOL;
   echo $html;
-  settings_fields( PPJQ_OPTIONS_GROUP );
-  do_settings_sections( PPJQ_SETTINGS_PAGE_SLUG_NAME );
+  settings_fields( PIPJQ_OPTIONS_GROUP );
+  do_settings_sections( PIPJQ_SETTINGS_PAGE_SLUG_NAME );
   $html  = '      <p>Note that the ‘Use Subresource Integrity’ option only has meaning when ‘Use Content Distribution Network’ is enabled.</p>' . PHP_EOL;
   $html .= get_submit_button() . PHP_EOL;
   $html .= '    </form>' . PHP_EOL;
   echo $html;
 }
 
-function pipfrosch_jquery_register_settings() {
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_migrate',
+function pipjq_register_settings() {
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_migrate',
                     array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_cdn',
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_cdn',
                     array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_sri',
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_sri',
                     array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_cdnhost',
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_cdnhost',
                     array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
 
-  add_settings_section( PPJQ_SECTION_SLUG_NAME,
+  add_settings_section( PIPJQ_SECTION_SLUG_NAME,
                         'Plugin Options',
                         'cbfn_pipfrosch_jquery_add_settings_section',
-                        PPJQ_SETTINGS_PAGE_SLUG_NAME );
+                        PIPJQ_SETTINGS_PAGE_SLUG_NAME );
 
-  add_settings_field( 'pipfrosch_jquery_migrate',
+  add_settings_field( 'pipjq_migrate',
                       'Use Migrate Plugin',
                       'pipfrosch_jquery_render_migrate',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array('label_for' => 'pipfrosch_jquery_migrate' ) );
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array('label_for' => 'pipjq_migrate' ) );
 
-  add_settings_field( 'pipfrosch_jquery_cdn',
+  add_settings_field( 'pipjq_cdn',
                       'Use Content Distribution Network',
                       'pipfrosch_jquery_render_cdn',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array( 'label_for' => 'pipfrosch_jquery_cdn' ) );
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array( 'label_for' => 'pipjq_cdn' ) );
 
-  add_settings_field( 'pipfrosch_jquery_sri',
+  add_settings_field( 'pipjq_sri',
                       'Use Subresource Integrity',
                       'pipfrosch_jquery_render_sri',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array( 'label_for' => 'pipfrosch_jquery_sri' ) );
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array( 'label_for' => 'pipjq_sri' ) );
 
-  add_settings_field( 'pipfrosch_jquery_cdnhost',
+  add_settings_field( 'pipjq_cdnhost',
                       'Select Public CDN Service',
                       'pipfrosch_jquery_render_cdnhost',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array( 'label_for' => 'pipfrosch_jquery_cdnhost' ) );
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array( 'label_for' => 'pipjq_cdnhost' ) );
 }
 
-function pipfrosch_jquery_register_options_page() {
+function pipjq_register_options_page() {
   add_options_page( 'jQuery ' . PIPJQV . ' Options',
                     'jQuery Options',
                     'manage_options',
