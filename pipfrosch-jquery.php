@@ -36,7 +36,7 @@ define( "PIPFROSCH_JQUERY_PLUGIN_DIR", plugin_dir_path( __FILE__ ) );
 define( "PIPFROSCH_JQUERY_PLUGIN_WEBPATH", $pipfrosch_jquery_url['path'] );
 
 define( "PPJQ_OPTIONS_GROUP", 'pipfrosch_jquery_opgroup');
-define( "PPJQ_SECTION_SLUG_NAME", 'pipfrosh_jquery_settings_form' );
+define( "PPJQ_SECTION_SLUG_NAME", 'pipfrocsh_jquery_settings_form' );
 define( "PPJQ_SETTINGS_PAGE_SLUG_NAME", 'pipfrosch_jquery_options');
 
 require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'versions.php' );
