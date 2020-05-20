@@ -27,8 +27,8 @@ well. See the LICENSE file.
  *
  * This plugin uses the pipjq_ prefix as an emulated namespace for most
  *  things and the prefix PIPJQ_ prefix for constants *except* for the
- *  jQuery and Migrate version and SRI constants, where it is just PIPJQ
- *  without the underscore.
+ *  jQuery and Migrate version and SRI constants, where I do not use
+ *  underscores at all so it is just prefixed with PIPJQ.
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -38,6 +38,11 @@ $pipjq_url_array = parse_url( plugin_dir_url( __FILE__ ) );
 define( "PIPJQ_PLUGIN_DIR", plugin_dir_path( __FILE__ ) );
 define( "PIPJQ_PLUGIN_WEBPATH", $pipjq_url_array['path'] );
 
+/*
+ * When developing, the Settings API gave me trouble. By defining the
+ *  various slugs as constants it made it much easier to visually see
+ *  where my mistakes were. Figured might as well keep them.
+ */
 define( "PIPJQ_OPTIONS_GROUP", 'pipjq_opgroup');
 define( "PIPJQ_SECTION_SLUG_NAME", 'pipjq_settings_form' );
 define( "PIPJQ_SETTINGS_PAGE_SLUG_NAME", 'pipjq_options');
