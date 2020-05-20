@@ -37,7 +37,7 @@ function pipfrosch_press_sanitize_cdnhost( $input ) {
     case 'jsdelivr cdn':
       return 'jsDelivr CDN';
       break;
-    case 'cloudflare cdnjd':
+    case 'cloudflare cdnjs':
       return 'CloudFlare CDNJS';
       break;
     case 'google cdn':
