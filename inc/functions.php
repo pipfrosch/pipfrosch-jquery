@@ -1,6 +1,6 @@
 <?php
 
-if ( ! defined( 'PIPFROSCH_JQUERY_PLUGIN_DIR' ) ) { exit; }
+if ( ! defined( 'PIPFROSCH_JQUERY_PLUGIN_WEBPATH' ) ) { exit; }
 
 //sanitize plugin options before setting/updating them
 function pipfrosch_jquery_set_boolean_option( string $option, bool $value ) {
@@ -33,10 +33,10 @@ function pipfrosch_jquery_set_boolean_option( string $option, bool $value ) {
 function pipfrosh_jquery_fallback( $core = true ) {
   $html = '<script>' . PHP_EOL . '  // Fallback to load locally if CDN fails' . PHP_EOL;
   if ($core) {
-    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_DIR . 'jquery-' . PIPJQV . '.min.js"></script>\'));' . PHP_EOL;
+    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"></script>\'));' . PHP_EOL;
   } else {
     $html .= '  if (typeof jQuery.migrateWarnings == \'undefined\') {' . PHP_EOL;
-    $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_DIR . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"></script>\');' . PHP_EOL;
+    $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"></script>\');' . PHP_EOL;
     $html .= '  }' . PHP_EOL;
   }
   $html .= '</script>' . PHP_EOL;
@@ -95,7 +95,7 @@ function pipfrosch_jquery_update_core_jquery() {
   if ($cdn) {
     $path = 'https://code.jquery.com/';
   } else {
-    $path = PIPFROSCH_JQUERY_PLUGIN_DIR;
+    $path = PIPFROSCH_JQUERY_PLUGIN_WEBPATH;
   }
   wp_deregister_script( 'jquery-core' );
   wp_deregister_script( 'jquery-migrate' );
@@ -114,7 +114,7 @@ function pipfrosch_jquery_update_core_jquery() {
 
 // creates the .htaccess file. I do not like including a .htaccess within a plugin zip archive.
 function pipfrosch_jquery_set_expires_header() {
-  $htaccess = PIPFROSCH_JQUERY_PLUGIN_DIR . ".htaccess";
+  $htaccess = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
     return;
@@ -239,21 +239,4 @@ function pipfrosch_jquery_register_options_page() {
                     'pipfrosch_jquery',
                     'pipfrosch_jquery_options_page' );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
