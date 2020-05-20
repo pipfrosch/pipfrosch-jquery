@@ -82,6 +82,9 @@ function pipfrosch_jquery_validate_input( $input ) {
       $string = $key . " " . $value;
       error_log($string);
     }
+  } else {
+    $foo = gettype($input);
+    error_log($foo);
   }
 }
 
