@@ -71,7 +71,7 @@ function pipfrosch_press_sanitize_checkbox( $input ) {
       return "1";
     }
   }
-  return "0";
+  return "1";
 }
 
 /* initiate options */
