@@ -2,31 +2,84 @@
 
 if ( ! defined( 'PIPFROSCH_JQUERY_PLUGIN_WEBPATH' ) ) { exit; }
 
-//sanitize plugin options before setting/updating them
-function pipfrosch_jquery_set_boolean_option( string $option, bool $value ) {
-  if (! is_string( $option ) ) {
-    return;
-  }
-  $stub = substr( $option, 0, 17);
-  if ( $stub !== "pipfrosch_jquery_" ) {
-    return;
-  }
-  if ( ! is_bool( $value ) ) {
-    // shamelessly stolen from wp-includes/rest-api.php
-    //  I added trim
-    if ( is_string( $value ) ) {
-      $value = trim( strtolower( $value ) );
-      if ( in_array( $value, array( 'false', '0' ), true ) ) {
-        $value = false;
-      }
+// boolean options are stored by plugin as strings in options API
+//  this function always returns a boolean and "fixes" the options value
+//  if not set or set to true instead of string
+function pipfrosch_jquery_getas_boolean( string $option, bool $default = true ) {
+  $test = get_option( $option );
+  if ( is_bool( $test ) ) {
+    if ( $test ) {
+       update_option( $option, '1');
+       return $test;
+    } else {
+       $value = '0';
+       if ( $default ) {
+         $value = '1';
+       }
+       add_option( $option, $value );
+       return $default;
     }
   }
-  if ( ! get_option( $option ) ) {
-    //option not yet set
-    add_option( $option, boolval( $value ) );
-    return;
+  $q = intval( $test );
+  if ( $q === 0 ) {
+    return false;
   }
-  update_option( $option, boolval( $value ) );
+  return true;
+}
+
+// the callback to sanitize cdnhost string
+function pipfrosch_press_sanitize_cdnhost( $input ) {
+  $input = strtolower( sanitize_text_field( $input ) );
+  switch( $input ) {
+    case 'microsoft cdn':
+      return 'Microsoft CDN';
+      break;
+    case 'jsdelivr cdn':
+      return 'jsDelivr CDN';
+      break;
+    case 'cloudflare cdnjd':
+      return 'CloudFlare CDNJS';
+      break;
+    case 'google cdn':
+      return 'Google CDN';
+      break;
+  }
+  return 'jQuery.com CDN';
+}
+
+// returns the CDN host and sets it if it is not set
+function pipfrosch_jquery_getstring_cdnhost() {
+  $default = pipfrosch_press_sanitize_cdnhost( 'use default' );
+  $test = get_option( 'pipfrosch_jquery_cdnhost' );
+  if (! is_string ( $test ) ) {
+    add_option( 'pipfrosch_jquery_cdnhost', $default );
+    return $default;
+  }
+  $clean = pipfrosch_press_sanitize_cdnhost( $test );
+  if ( $clean !== $test ) {
+    update_option( 'pipfrosch_jquery_cdnhost', $clean );
+  }
+  return $clean;
+}
+
+// the callback to sanitize checkbox string - currently broken
+function pipfrosch_press_sanitize_checkbox( $input ) {
+  $input = sanitize_text_field( $input );
+  if ( is_numeric( $input ) ) {
+    $num = intval( $input );
+    if ( $num === 1 ) {
+      return "1";
+    }
+  }
+  return "0";
+}
+
+/* initiate options */
+function pipfrosch_jquery_initiate_options() {
+  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
+  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
+  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
+  $foo = pipfrosch_jquery_getstring_cdnhost();
 }
 
 /* provide fallback if jQuery does not load from CDN */
@@ -112,32 +165,14 @@ function pipfrosch_jquery_source( string $cdnhost="localhost" ) {
 // defines the included jQuery to be served
 function pipfrosch_jquery_update_core_jquery() {
   //get the settings and validate
-  $migrate = get_option( 'pipfrosch_jquery_migrate', true );
-  if ( ! is_bool( $migrate ) ) {
-    $migrate = true;
-    pipfrosch_jquery_set_boolean_option( 'pipfrosch_jquery_migrate', true );
+  $migrate = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
+  $cdn     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
+  $sri     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
+  $cdnhost = 'localhost';
+  $if ( $cdn ) {
+    $cdnhost = pipfrosch_jquery_getstring_cdnhost();
   }
-  $cdn = get_option( 'pipfrosch_jquery_cdn', false );
-  if ( ! is_bool( $cdn ) ) {
-    $cdn = false;
-    pipfrosch_jquery_set_boolean_option( 'pipfrosch_jquery_cdn', false );
-  }
-  $sri = get_option( 'pipfrosch_jquery_sri', true );
-  if ( ! is_bool( $sri ) ) {
-    $sri = true;
-    pipfrosch_jquery_set_boolean_option( 'pipfrosch_jquery_sri', true );
-  }
-  if ( $cdn ) {
-    $cdnhost = get_option( 'pipfrosch_jquery_cdnhost' );
-    if (! is_string( $cdnhost ) ) {
-      $cdnhost = 'jQuery.com CDN';
-    }
-  } else {
-    $cdnhost = 'localhost';
-  }
-  
   $srcuri = pipfrosch_jquery_source( $cdnhost );
-
   //act on options
   wp_deregister_script( 'jquery-core' );
   wp_deregister_script( 'jquery-migrate' );
@@ -154,8 +189,9 @@ function pipfrosch_jquery_update_core_jquery() {
   }
 }
 
-// creates the .htaccess file. I do not like including a .htaccess within a plugin zip archive.
+// initiated options and creates the .htaccess file. I do not like including a .htaccess within a plugin zip archive.
 function pipfrosch_jquery_set_expires_header() {
+  pipfrosch_jquery_initiate_options();
   $htaccess = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
@@ -175,51 +211,16 @@ function pipfrosch_jquery_set_expires_header() {
 
 //settings
 
-// the callback to sanitize checkbox string - currently broken
-function pipfrosch_press_sanitize_checkbox( $input ) {
-  if ( is_numeric( $input ) ) {
-    $num = intval( $input );
-    if ( $num === 1 ) {
-      return true;
-    }
-  }
-  return false;
-}
-
-// the callback to sanitize cdnhost string
-function pipfrosch_press_sanitize_cdnhost( $input ) {
-  $input = strtolower( sanitize_text_field( $input ) );
-  switch( $input ) {
-    case 'microsoft cdn':
-      return 'Microsoft CDN';
-      break;
-    case 'jsdelivr cdn':
-      return 'jsDelivr CDN';
-      break;
-    case 'cloudflare cdnjd':
-      return 'CloudFlare CDNJS';
-      break;
-    case 'google cdn':
-      return 'Google CDN';
-      break;
-  }
-  return 'jQuery.com CDN';
-}
-
 // the callback for add_settings_section
 function pipfrosh_jquery_show_recommend() {
   echo ('<p>It is recommended that you enable the ‘Use Migrate Plugin’ option (default).</p>');
   echo ('<p>It is recommended that you enable the ‘Use Content Distribution Network’ option.</p>');
   echo ('<p>It is recommended that you enable the ‘Use Subresource Integrity’ option (default).</p>');
-  echo ('');
 }
 
 // render migrate
 function pipfrosh_jquery_render_migrate() {
-  $migrate = get_option( 'pipfrosch_jquery_migrate', true );
-  if ( ! is_bool( $migrate ) ) {
-    $migrate = true;
-  }
+  $migrate = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
   $checked = '';
   if ($migrate) {
     $checked = ' checked="checked"';
@@ -229,10 +230,7 @@ function pipfrosh_jquery_render_migrate() {
 
 // render cdn
 function pipfrosh_jquery_render_cdn() {
-  $cdn = get_option( 'pipfrosch_jquery_cdn', false );
-  if ( ! is_bool( $cdn ) ) {
-    $cdn = false;
-  }
+  $cdn = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
   $checked = '';
   if ($cdn) {
     $checked = ' checked="checked"';
@@ -242,10 +240,7 @@ function pipfrosh_jquery_render_cdn() {
 
 // render sri
 function pipfrosh_jquery_render_sri() {
-  $sri = get_option( 'pipfrosch_jquery_sri', true );
-  if ( ! is_bool( $sri ) ) {
-    $sri = true;
-  }
+  $sri = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
   $checked = '';
   if ($sri) {
     $checked = ' checked="checked"';
@@ -254,38 +249,18 @@ function pipfrosh_jquery_render_sri() {
 }
 
 function pipfrosch_jquery_register_settings() {
-  //add_option( 'pipfrosch_jquery_migrate' );
-  //add_option( 'pipfrosch_jquery_cdn' );
-  //add_option( 'pipfrosch_jquery_sri' );
-  //add_option( 'pipfrosch_jquery_cdnhost' );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_migrate',
-                    array( 'type' => 'boolean',
-                           'description' => 'Load jQuery migrate ' . PIPJQMIGRATE  . ' plugin',
-                           'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox',
-                           'show_in_rest' => false,
-                           'default' => true ) );
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
   register_setting( 'pipfrosh_jquery_options',
                     'pipfrosch_jquery_cdn',
-                    array( 'type' => 'boolean',
-                           'description' => 'Use code.jqeery.com CDN for jQuery',
-                           'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox',
-                           'show_in_rest' => false,
-                           'default' => false ) );
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_sri',
-                    array( 'type' => 'boolean',
-                           'description' => 'Use Subresource Integrity when using jQuery CDN',
-                           'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox',
-                           'show_in_rest' => false,
-                           'default' => true ) );
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_cdnhost',
-                    array( 'type' => 'string',
-                           'description' => 'Which CDN service to use',
-                           'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost',
-                           'show_in_rest' => false,
-                           'default' => 'jQuery.com CDN' ) );
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
 
   add_settings_section( 'pipfrosh_jquery_settings_form',
                         'Plugin Options',

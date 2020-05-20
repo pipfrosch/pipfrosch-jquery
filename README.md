@@ -1,6 +1,9 @@
 Pipfrosch jQuery
 ================
 
+__WARNING__ current commit restructured a lot, probably broke stuff. I will
+remove this when no less broken then before these changes.
+
 Plugin for modern jQuery in WordPress.
 
 __DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
