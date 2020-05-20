@@ -1,12 +1,10 @@
 Pipfrosch jQuery
 ================
 
-__UNTESTED MAJOR CHANGE SINCE LAST COMMIT__
-(fallback code for if CDN fails)
+__BROKEN SINCE LAST COMMIT__
+(fallback code for if CDN fails - has a bug, needs escaping)
 
 Plugin for modern jQuery in WordPress.
-
-Also just noticed `PIPFROSCH_JQUERY_PLUGIN_DIR` is wrong so its borked at moment.
 
 __DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
 
