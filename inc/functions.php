@@ -192,7 +192,7 @@ function pipfrosch_jquery_update_core_jquery() {
 // initiated options and creates the .htaccess file. I do not like including a .htaccess within a plugin zip archive.
 function pipfrosch_jquery_set_expires_header() {
   pipfrosch_jquery_initiate_options();
-  $htaccess = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . ".htaccess";
+  $htaccess = PIPFROSCH_JQUERY_PLUGIN_DIR . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
     return;
