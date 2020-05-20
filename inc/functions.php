@@ -2,9 +2,20 @@
 
 if ( ! defined( 'PIPJQ_PLUGIN_WEBPATH' ) ) { exit; }
 
-// boolean options are stored by plugin as strings in options API
-//  this function always returns a boolean and "fixes" the options value
-//  if not set or set to true instead of string
+/**
+ * Get an option as boolean value.
+ *
+ * This function queries the option and returns a boolean value representing
+ *  the option if the option has been set and returns a boolean default if the
+ *  option has not been set. It also sets the option to a string equivalent of
+ *  the boolean default (a "0" for false or a "1" for true) if the option is
+ *  not set.
+ *
+ * @param string The name of the option to query.
+ * @param bool   The default value to return and set if the option is not set.
+ *
+ * @return bool
+ */
 function pipjq_get_option_as_boolean( string $option, bool $default = true ) {
   $test = get_option( $option );
   if ( is_bool( $test ) ) {
@@ -28,7 +39,20 @@ function pipjq_get_option_as_boolean( string $option, bool $default = true ) {
 }
 
 // the sanitizes cdnhost string
-function pipjq_sanitize_cdnhost( $input ) {
+
+/**
+ * Sanitize CDN host string
+ *
+ * This WordPress uses a fixed set public Content Distribution Networks.
+ *  This function eats an input and outputs a sanitized version that matches
+ *  the case sensitivity expected, returning the default CDN if it can not
+ *  identify which CDN is intended in the input.
+ *
+ * @param string The CDN host string to sanitize.
+ *
+ * @return string
+ */
+function pipjq_sanitize_cdnhost( string $input ) {
   $input = strtolower( sanitize_text_field( $input ) );
   switch( $input ) {
     case 'microsoft cdn':
@@ -47,7 +71,19 @@ function pipjq_sanitize_cdnhost( $input ) {
   return 'jQuery.com CDN';
 }
 
-// returns the CDN host and sets it if it is not set
+/**
+ * Get CDN host option and return as sanitized string.
+ *
+ * This function queries the option setting for the CDN host to use
+ *  and sanitizes the result. In the event that the option is not
+ *  yet set, it sets the option to the default value as returned by
+ *  the pipjq_sanitize_cdnhost() function. In the event that the
+ *  sanitized option returned differs from what is stored as in the
+ *  WordPress options database for this setting, the WordPress option
+ *  is updated with the sanitized version.
+ *
+ * @return string
+ */
 function pipjq_get_cdnhost_option() {
   $default = pipjq_sanitize_cdnhost( 'use default' );
   $test = get_option( 'pipjq_cdnhost' );
