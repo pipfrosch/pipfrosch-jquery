@@ -239,7 +239,7 @@ function pipfrosch_jquery_render_migrate() {
   if ($migrate) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrocsh_jquery_migrate" id="pipfrosch_jquery_migrate" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosch_jquery_migrate" id="pipfrosch_jquery_migrate" value="1"' . $checked . '>';
 }
 
 // render cdn
@@ -249,7 +249,7 @@ function pipfrosch_jquery_render_cdn() {
   if ($cdn) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrocsh_jquery_cdn" id="pipfrocsh_jquery_cdn" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosch_jquery_cdn" id="pipfrosch_jquery_cdn" value="1"' . $checked . '>';
 }
 
 // render sri
@@ -259,7 +259,7 @@ function pipfrosch_jquery_render_sri() {
   if ($sri) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrocsh_jquery_sri" id="pipfrocsh_jquery_sri" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipfrosch_jquery_sri" id="pipfrosch_jquery_sri" value="1"' . $checked . '>';
 }
 
 function cbfn_pipfrosch_jquery_options_page() {
