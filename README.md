@@ -1,9 +1,6 @@
 Pipfrosch jQuery
 ================
 
-__WARNING__ current commit restructured a lot, probably broke stuff. I will
-remove this when no less broken then before these changes.
-
 Plugin for modern jQuery in WordPress.
 
 __DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
@@ -11,9 +8,20 @@ __DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
 Current Status
 --------------
 
-Options page is created but is not updated. Clearly there is something about
-the settings API that I am not understanding and various blogs are not
-explaining in a way I can understand.
+Options page is created and working. Microsoft CDN still does not current
+versions of either jQuery or the migrate plugin. All the other CDNs have
+current version of jQuery and it passes SRI.
+
+Google does not have the migrate plugin but when Google is selected, this
+WordPress plugin will use code.jquery.com for the migrate plugin.
+
+CloudFlare and jsDelivr both have the migrate plugin but their copies do
+not pass SRI.
+
+Fortunately this plugin uses it's own copies when a CDN does not have the
+file or it does not pass SRI.
+
+Everything seems to be working but some code will be cleaned up.
 
 General
 -------
