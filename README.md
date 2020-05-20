@@ -1,12 +1,19 @@
 Pipfrosch jQuery
 ================
 
-__BROKEN SINCE LAST COMMIT__
-(fallback code for if CDN fails - has a bug, needs escaping)
-
 Plugin for modern jQuery in WordPress.
 
 __DO NOT USE MIGHT BE BORKED AT ANY GIVEN TIME__
+
+Current Status
+--------------
+
+Options page is created but is not updated. Clearly there is something about
+the settings API that I am not understanding and various blogs are not
+explaining in a way I can understand.
+
+General
+-------
 
 This github is for developing the plugin. When it is ready, right way to
 install will be through the WordPress plugin installer where only tested

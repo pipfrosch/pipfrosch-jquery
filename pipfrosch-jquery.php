@@ -41,17 +41,11 @@ require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'inc/options.php' );
 
 register_activation_hook( __FILE__, 'pipfrosch_jquery_set_expires_header' );
 
-/* only bother with these if the user can manage option */
-//if ( current_user_can( 'manage_options' ) ) {
-//  add_action( 'admin_init', 'pipfrosch_jquery_register_settings' );
-//  add_action( 'admin_menu', 'pipfrosch_jquery_register_options_page' );
-//}
-
-/* do not mess with jQuery if on admin pages */
-if ( ! is_admin() ) {
-  add_action( 'wp_enqueue_scripts', 'pipfrosch_jquery_update_core_jquery' );
-} else {
+/* only do settings stuff if on admin page, do not update jQuery if on admin pages */
+if ( is_admin() ) {
   add_action( 'admin_init', 'pipfrosch_jquery_register_settings' );
   add_action( 'admin_menu', 'pipfrosch_jquery_register_options_page' );
+} else {
+  add_action( 'wp_enqueue_scripts', 'pipfrosch_jquery_update_core_jquery' );
 }
 
