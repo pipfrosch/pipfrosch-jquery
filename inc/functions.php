@@ -244,7 +244,7 @@ function pipfrosch_jquery_register_settings() {
   add_option( 'pipfrosch_jquery_migrate' );
   add_option( 'pipfrosch_jquery_cdn' );
   add_option( 'pipfrosch_jquery_sri' );
-  add_option( 'pipfrosch_jquery_cdnhost' )
+  add_option( 'pipfrosch_jquery_cdnhost' );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_migrate',
                     array( 'type' => 'boolean',
