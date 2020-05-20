@@ -268,7 +268,7 @@ function pipfrosch_jquery_register_settings() {
                            'default' => true ) );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_cdnhost',
-                    array( 'type' => 'string';
+                    array( 'type' => 'string',
                            'description' => 'Which CDN service to use',
                            'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost',
                            'show_in_rest' => false,
