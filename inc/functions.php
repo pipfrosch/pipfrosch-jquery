@@ -64,7 +64,6 @@ function pipfrosch_jquery_getstring_cdnhost() {
 
 // the callback to sanitize checkbox string - currently broken
 function pipfrosch_press_sanitize_checkbox( $input ) {
-  error_log( $input );
   $input = sanitize_text_field( $input );
   if ( is_numeric( $input ) ) {
     $num = intval( $input );
@@ -72,7 +71,7 @@ function pipfrosch_press_sanitize_checkbox( $input ) {
       return "1";
     }
   }
-  return "1";
+  return "0";
 }
 
 function pipfrosch_jquery_validate_input( $input ) {
@@ -292,13 +291,13 @@ function cbfn_pipfrosch_jquery_options_page() {
 function pipfrosch_jquery_register_settings() {
   register_setting( PPJQ_OPTIONS_GROUP,
                     'pipfrosch_jquery_migrate',
-                    array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
   register_setting( PPJQ_OPTIONS_GROUP,
                     'pipfrosch_jquery_cdn',
-                    array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
   register_setting( PPJQ_OPTIONS_GROUP,
                     'pipfrosch_jquery_sri',
-                    array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
   //register_setting( PPJQ_OPTIONS_GROUP,
   //                  'pipfrosch_jquery_cdnhost',
   //                  array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
