@@ -74,22 +74,6 @@ function pipfrosch_press_sanitize_checkbox( $input ) {
   return "0";
 }
 
-function pipfrosch_jquery_validate_input( $input ) {
-  if (is_array($input)) {
-    error_log( "is array" );
-    foreach($input as $key => $value ) {
-      $string = $key . " " . $value;
-      error_log($string);
-    }
-  } else {
-    $foo = gettype($input);
-    error_log($foo);
-  }
-  if (is_string($foo)) {
-    error_log($input);
-  }
-}
-
 /* initiate options */
 function pipfrosch_jquery_initiate_options() {
   $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
@@ -254,6 +238,26 @@ function pipfrosch_jquery_render_cdn() {
   echo '<input type="checkbox" name="pipfrosch_jquery_cdn" id="pipfrosch_jquery_cdn" value="1"' . $checked . '>';
 }
 
+// render cdnhost
+function pipfrosch_jquery_render_cdnhost() {
+  $cdnhost = pipfrosch_jquery_getstring_cdnhost();
+  $values = array('jQuery.com CDN',
+                  'CloudFlare CDNJS',
+                  'jsDelivr CDN',
+                  'Microsoft CDN',
+                  'Google CDN');
+  $html = '<select name="pipfrosch_jquery_cdnhost" id="pipfrosch_jquery_cdnhost">' . PHP_EOL;
+  foreach($values as $value) {
+    $selected = '';
+    if ($cdnhost === $value) {
+      $selected = ' selected="selected"';
+    }
+    $html .= '  <option value="' . $value . '"' . $selected . '>' . $value . '</value>' . PHP_EOL;
+  }
+  $html .= '</select>' . PHP_EOL;
+  echo $html;
+}
+
 // render sri
 function pipfrosch_jquery_render_sri() {
   $sri = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
@@ -298,9 +302,9 @@ function pipfrosch_jquery_register_settings() {
   register_setting( PPJQ_OPTIONS_GROUP,
                     'pipfrosch_jquery_sri',
                     array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  //register_setting( PPJQ_OPTIONS_GROUP,
-  //                  'pipfrosch_jquery_cdnhost',
-  //                  array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
+  register_setting( PPJQ_OPTIONS_GROUP,
+                    'pipfrosch_jquery_cdnhost',
+                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
 
   add_settings_section( PPJQ_SECTION_SLUG_NAME,
                         'Plugin Options',
@@ -327,6 +331,13 @@ function pipfrosch_jquery_register_settings() {
                       PPJQ_SETTINGS_PAGE_SLUG_NAME,
                       PPJQ_SECTION_SLUG_NAME,
                       array( 'label_for' => 'pipfrosch_jquery_sri' ) );
+
+  add_settings_field( 'pipfrosch_jquery_cdnhost',
+                      'Select Public CDN Service',
+                      'pipfrosch_jquery_render_cdnhost',
+                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PPJQ_SECTION_SLUG_NAME,
+                      array( 'label_for' => 'pipfrosch_jquery_cdnhost' ) );
 }
 
 function pipfrosch_jquery_register_options_page() {

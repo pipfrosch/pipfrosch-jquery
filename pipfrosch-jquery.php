@@ -23,12 +23,9 @@ well. See the LICENSE file.
 
 // WordPress says to use real tabs and not spaces. I effing hate real tabs.
 //
-// I tried to follow the other WP coding rules.
+// I tried to follow the other WP coding rules. Well, sort of...
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-
-//include_once(ABSPATH . 'wp-includes/pluggable.php');
-//include(ABSPATH . "wp-admin/includes/user.php.");
 
 $pipfrosch_jquery_url = parse_url( plugin_dir_url( __FILE__ ) );
 
@@ -41,7 +38,6 @@ define( "PPJQ_SETTINGS_PAGE_SLUG_NAME", 'pipfrosch_jquery_options');
 
 require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'versions.php' );
 require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'inc/functions.php' );
-require_once( PIPFROSCH_JQUERY_PLUGIN_DIR . 'inc/options.php' );
 
 register_activation_hook( __FILE__, 'pipfrosch_jquery_set_expires_header' );
 
