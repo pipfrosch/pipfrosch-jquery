@@ -169,7 +169,7 @@ function pipfrosch_jquery_update_core_jquery() {
   $cdn     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
   $sri     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
   $cdnhost = 'localhost';
-  $if ( $cdn ) {
+  if ( $cdn ) {
     $cdnhost = pipfrosch_jquery_getstring_cdnhost();
   }
   $srcuri = pipfrosch_jquery_source( $cdnhost );
