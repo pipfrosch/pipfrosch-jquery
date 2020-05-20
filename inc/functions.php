@@ -39,7 +39,7 @@ function pipfrosh_jquery_fallback( $core = true ) {
     $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"></script>\');' . PHP_EOL;
     $html .= '  }' . PHP_EOL;
   }
-  $html .= '</script>' . PHP_EOL;
+  $html .= '<\/script>' . PHP_EOL;
   return $html;
 }
 
