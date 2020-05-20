@@ -226,7 +226,7 @@ function pipfrosch_jquery_set_expires_header() {
 //settings
 
 // the callback for add_settings_section
-function pipfrosh_jquery_show_recommend() {
+function cbfn_pipfrosch_jquery_add_settings_section() {
   echo ('<p>It is recommended that you enable the ‘Use Migrate Plugin’ option (default).</p>');
   echo ('<p>It is recommended that you enable the ‘Use Content Distribution Network’ option.</p>');
   echo ('<p>It is recommended that you enable the ‘Use Subresource Integrity’ option (default).</p>');
@@ -262,44 +262,68 @@ function pipfrosh_jquery_render_sri() {
   echo '<input type="checkbox" name="pipfrosh_jquery_sri" id="pipfrosh_jquery_sri" value="1"' . $checked . '>';
 }
 
+function cbfn_pipfrosch_jquery_options_page() {
+  $cdn = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
+  $parenthesis = '(disabled)';
+  if ( $cdn ) {
+    $parenthesis = '(enabled)';
+  }
+  $cdnhost = pipfrosch_jquery_getstring_cdnhost();
+  $s = array( '/CDN$/' , '/CDNJS/' );
+  $r = array( '<abbr>CDN</abbr>' , '<abbr>CDNJS</abbr>' );
+  $cdnhost = preg_replace($s, $r, $cdnhost);
+  $html  = '    <h2>Pipfrosch jQuery Plugin Management</h2>' . PHP_EOL;
+  $html .= '    <p>jQuery Version: ' . PIPJQV . '</p>' . PHP_EOL;
+  $html .= '    <p>jQuery Migrate Plugin Version: ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
+  $html .= '    <p>Current <abbr title="Content Distribution Network">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
+  $html .= '    <form method="post" action="options.php">' . PHP_EOL;
+  echo $html;
+  settings_fields( PPJQ_OPTIONS_GROUP );
+  do_settings_sections( PPJQ_SETTINGS_PAGE_SLUG_NAME );
+  $html  = '      <p>Note that the ‘Use Subresource Integrity’ option only has meaning when ‘Use Content Distribution Network’ is enabled.</p>' . PHP_EOL;
+  $html .= get_submit_button() . PHP_EOL;
+  $html .= '    </form>' . PHP_EOL;
+  echo $html;
+}
+
 function pipfrosch_jquery_register_settings() {
-  register_setting( 'pipfrosch_jquery_options',
+  register_setting( PPJQ_OPTIONS_GROUP,
                     'pipfrosch_jquery_migrate',
                     array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
-  register_setting( 'pipfrosh_jquery_options',
+  register_setting( PPJQ_OPTIONS_GROUP,
                     'pipfrosch_jquery_cdn',
                     array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
-  register_setting( 'pipfrosch_jquery_options',
+  register_setting( PPJQ_OPTIONS_GROUP,
                     'pipfrosch_jquery_sri',
                     array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
-  //register_setting( 'pipfrosch_jquery_options',
+  //register_setting( PPJQ_SETTINGS_PAGE_SLUG_NAME,
   //                  'pipfrosch_jquery_cdnhost',
   //                  array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
 
-  add_settings_section( 'pipfrosh_jquery_settings_form',
+  add_settings_section( PPJQ_SECTION_SLUG_NAME,
                         'Plugin Options',
-                        'pipfrosh_jquery_show_recommend',
-                        'pipfrosch_jquery_options' );
+                        'cbfn_pipfrosch_jquery_add_settings_section',
+                        PPJQ_SETTINGS_PAGE_SLUG_NAME );
 
   add_settings_field( 'pipfrosh_jquery_migrate',
                       'Use Migrate Plugin',
                       'pipfrosh_jquery_render_migrate',
-                      'pipfrosch_jquery_options',
-                      'pipfrosh_jquery_settings_form',
+                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PPJQ_SECTION_SLUG_NAME,
                       array('label_for' => 'pipfrosh_jquery_migrate' ) );
 
   add_settings_field( 'pipfrosh_jquery_cdn',
                       'Use Content Distribution Network',
                       'pipfrosh_jquery_render_cdn',
-                      'pipfrosch_jquery_options',
-                      'pipfrosh_jquery_settings_form',
+                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PPJQ_SECTION_SLUG_NAME,
                       array( 'label_for' => 'pipfrosh_jquery_cdn' ) );
 
   add_settings_field( 'pipfrosh_jquery_sri',
                       'Use Subresource Integrity',
                       'pipfrosh_jquery_render_sri',
-                      'pipfrosch_jquery_options',
-                      'pipfrosh_jquery_settings_form',
+                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PPJQ_SECTION_SLUG_NAME,
                       array( 'label_for' => 'pipfrosh_jquery_sri' ) );
 }
 
@@ -308,6 +332,5 @@ function pipfrosch_jquery_register_options_page() {
                     'jQuery Options',
                     'manage_options',
                     'pipfrosch_jquery',
-                    'pipfrosch_jquery_options_page' );
+                    'cbfn_pipfrosch_jquery_options_page' );
 }
-
