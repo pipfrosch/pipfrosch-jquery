@@ -75,6 +75,16 @@ function pipfrosch_press_sanitize_checkbox( $input ) {
   return "1";
 }
 
+function pipfrosch_jquery_validate_input( $input ) {
+  if (is_array($input)) {
+    error_log( "is array" );
+    foreach($input as $key => $value ) {
+      $string = $key . " " . $value;
+      error_log($string);
+    }
+  }
+}
+
 /* initiate options */
 function pipfrosch_jquery_initiate_options() {
   $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
@@ -252,16 +262,16 @@ function pipfrosh_jquery_render_sri() {
 function pipfrosch_jquery_register_settings() {
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_migrate',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
+                    array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
   register_setting( 'pipfrosh_jquery_options',
                     'pipfrosch_jquery_cdn',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
+                    array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
   register_setting( 'pipfrosch_jquery_options',
                     'pipfrosch_jquery_sri',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  register_setting( 'pipfrosch_jquery_options',
-                    'pipfrosch_jquery_cdnhost',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
+                    array( 'sanitize_callback' => 'pipfrosch_jquery_validate_input' ) );
+  //register_setting( 'pipfrosch_jquery_options',
+  //                  'pipfrosch_jquery_cdnhost',
+  //                  array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
 
   add_settings_section( 'pipfrosh_jquery_settings_form',
                         'Plugin Options',
