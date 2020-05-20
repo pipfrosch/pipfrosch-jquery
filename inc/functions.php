@@ -252,7 +252,7 @@ function pipfrosch_jquery_render_cdnhost() {
     if ($cdnhost === $value) {
       $selected = ' selected="selected"';
     }
-    $html .= '  <option value="' . $value . '"' . $selected . '>' . $value . '</value>' . PHP_EOL;
+    $html .= '  <option value="' . $value . '"' . $selected . '>' . $value . '</option>' . PHP_EOL;
   }
   $html .= '</select>' . PHP_EOL;
   echo $html;
