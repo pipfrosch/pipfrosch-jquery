@@ -9,7 +9,7 @@ submission.
 Current Status
 --------------
 
-Pre-submission cleanup work is now taking place in this branch pipjq.
+Pre-submission cleanup work is finished, merging into master.
 
 General
 -------
