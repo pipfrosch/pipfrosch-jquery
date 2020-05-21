@@ -4,6 +4,8 @@ Tags: jQuery
 Donate link: https://pipfrosch.com/donate
 Requires at least: 4.1.0
 Tested up to: 5.4.1
+Stable tag: trunk
+Requires PHP: 7.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -112,11 +114,69 @@ not do that, but some do. They will not get an answer if this plugin has run
 before they run and they will get the wrong answer if they run before this
 script has run.
 
-== Updates ==
+== Update Policy ==
 I will try to update this plugin when new versions of jQuery are released but
-it may not be as fast as some may like. You can bug be by leaving a comment on
-the donate page if a new version of jQuery is out and I have not updated.
+it may not be as fast as some may like. You can bug me by leaving sending an
+e-mail to pipfroshpress[AT]gmail[DOT]com.
+
+Please note updated to this plugin with new versions of jQuery will not be
+pushed until that majority of the supported CDNs have the file.
 
 For the included jQuery Migrate plugin, I am less likely to notice when new
 versions are available but I do check whenever a new version of jQuery itself
 is released. Again you can bug me if needed.
+
+Development takes place on github. The `master` branch will usually be exactly
+the same as what is distributed through WordPress except it will have a small
+`README.md` file. The branch `pipjq` is where I develop and may not always be
+stable. When a new release ready *and tested* from the `pipjq` branch, it will
+be merged with `master` and then repacked for distribution through WordPress.
+
+Please use the distribution from WordPress rather than from github. The version
+from WordPress is audited by more eyes than my github.
+
+== Frequently Asked Questions ==
+
+= Does this version on jQuery impact blog administration? =
+
+No. It is *possible* that some versions of WordPress and *probable* that some
+plugins use jQuery for site administration that would break with the newer
+versions of jQuery. I recommend always using the version of jQuery that ships
+with WordPress for admin pages, so this plugin does not upgrade the WP Core
+jQuery for admin pages.
+
+= Why does this plugin require PHP 7 or newer? =
+
+I have neither the financial means nor the will-power to set up a testing
+environment suitable for testing with versions of PHP that no one should still
+be using anyway.
+
+= Why do I still sometimes see requests for jQuery in my server access log? =
+
+If you enabled a CDN but still see requests for jQuery in your server access
+logs, it means the client was not able to download jQuery from the CDN or that
+the file it downloaded did not pass security checks. When this happens, it
+triggers a fallback loading of jQuery from within the plugin directory.
+
+= Can I hire you to write me a plugin? =
+
+It does not hurt to ask but probably not, Pipfrosch Press is brand new and
+right now, coding for it is taking the majority of my time. When I code
+something for Pipfrosch Press I do not mind sharing I will share it, but
+projects outside of Pipfrosch Press are difficult for me to commit to.
+
+== Screenshots ==
+
+1. The settings menu.
+2. Generated WordPress HTML source code showing the failed CDN fallback code.
+
+== Changelog ==
+
+= 3.5.1pip0 =
+* Initial release (the 3.5.1 refers to jQuery library)
+
+== Upgrade Notice ==
+
+The version of jQuery in WordPress Core is very archaic and limits what you can
+do as a result. Upgrading the jQuery available for your front-end content will
+open up options.
