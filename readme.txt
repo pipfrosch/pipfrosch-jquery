@@ -9,38 +9,27 @@ Requires PHP: 7.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-Use an updated version of jQuery with your WordPress powered website.
-
-== Versioning Scheme ==
-Versions use an `Major.Minor.Patch scheme`. `Patch` is incremented by one when a
-minor change is made, such as adding new language support. Generally you can
-ignore upgrading plugin with a `Patch` bump. `Minor` is incremented by one when
-a bug is fixed or when an update to jQuery or the jQuery Migrate plugin is made
-that is not a substantial jQuery change. When the `Minor` is bumped, `Patch`
-will reset to `0`. Generally you should upgrade when `Minor` is bumped.
-`Major` will be incremented when there is an upgrade to jQuery that is
-significant in nature. Both `Minor` and `Patch` are reset to `0` when `Major`
-is bumped. Generally you should test an update to `Major` before updating on a
-production system just in case some of your jQuery code needs tweaks before
-deployment.
+Use jQuery 3.5.1 and jQuery Migrate 3.3.0 with your WordPress powered website.
 
 == Description ==
-The jQuery that current ships as part of WordPress is (as of 5.4.1) an older
-version of jQuery. As in ancient. This plugins allows you to instead use a much
+The jQuery that current ships as part of WordPress is (as of WP 5.4.1) an older
+version of jQuery. As in ancient. This plugin allows you to instead use a much
 more modern of jQuery, with optional compatibility for scripts that need the
 older jQuery calls.
 
 This plugin also optionally allows you to securely select a public CDN for
-jQuery including the appropriate SubResource Integrity (SRI) and CrossOrigin
+jQuery including the appropriate Subresource Integrity (SRI) and CrossOrigin
 attributes. Using a CDN can speed up the loading of your website as there is a
 good chance a client visiting your website already has the identical file
 in their browser cache and does not need to fetch it again.
 
-When a CDN is used, a small amount of code is added to provide a fallback where
-jQuery and the jQuery Migrate plugin are served from your site if either the
-CDN can not be reached by the client or if the SRI check fails.
+When a CDN is used, a small amount of code is added to your pages to provide a
+fallback where jQuery and the jQuery Migrate plugin are served from your site
+if either the CDN can not be reached by the client or if the SRI check fails.
 
-If you know you do not need the jQuery Migrate plugin, you can disable that.
+If you know you do not need the jQuery Migrate plugin, you can disable that
+plugin, but keep in mind that some themes and plugins do use jQuery code that
+needs it.
 
 The updated jQuery will not replace the core jQuery for administration pages.
 This is to avoid potential breakage of administrative pages.
@@ -98,7 +87,7 @@ case, it is redundant to have this plugin run a filter that adds them as well.
 
 = Public CDN Notes =
 
-As of May 20th, 2020 the following note apply.
+As of May 20th, 2020 the following notes apply.
 
 The Microsoft CDN does not yet have current versions of either the core jQuery
 library or the Migrate plugin. If you select that CDN, the files will be served
@@ -120,6 +109,7 @@ version they host will fail the SRI test causing the client browser to fetch it
 from your server instead.
 
 == Plugin / Theme Compatibility ==
+
 This plugin does not set the version for jQuery. Doing so greatly reduces the
 odds that a browser will recognize it already has the scripts cached. Some
 plugins and themes may query for the version of jQuery being used. They should
@@ -128,6 +118,7 @@ before they run and they will get the wrong answer if they run before this
 script has run.
 
 == Update Policy ==
+
 I will try to update this plugin when new versions of jQuery are released but
 it may not be as fast as some may like. You can bug me by leaving sending an
 e-mail to pipfroshpress[AT]gmail[DOT]com.
@@ -147,6 +138,33 @@ be merged with `master` and then repacked for distribution through WordPress.
 
 Please use the distribution from WordPress rather than from github. The version
 from WordPress is audited by more eyes than my github.
+
+
+== Versioning Scheme ==
+Versions use an `Major.Minor.Patch` scheme` using integers for each. Code in
+github may have a `pre` appended at the end to indicate is not a released
+version and should not be used on production systems.
+
+= Patch bump =
+`Patch` is incremented by one when a minor change is made, such as adding a new
+language to the translation support. Generally you can ignore upgrading this
+plugin when there is just a `Patch` bump.
+
+= Minor bump =
+`Minor` is incremented by one when a functional bug is fixed or when an update
+to jQuery or the jQuery Migrate plugin is made that is not a substantial jQuery
+change. When `Minor` is bumped, `Patch` will reset to `0`. Generally you should
+upgrade when `Minor` is bumped.
+
+= Major bump =
+
+`Major` will be incremented when there is an upgrade to jQuery that is
+significant in nature. Both `Minor` and `Patch` are reset to `0` when `Major`
+is bumped.
+
+Generally you should test an update to `Major` before updating on a production
+system just in case some of your jQuery code needs tweaks before deployment.
+
 
 == Frequently Asked Questions ==
 
@@ -178,15 +196,18 @@ right now, coding for it is taking the majority of my time. When I code
 something for Pipfrosch Press I do not mind sharing I will share it, but
 projects outside of Pipfrosch Press are difficult for me to commit to.
 
+
 == Screenshots ==
 
 1. The settings menu.
 2. Generated WordPress HTML source code showing the failed CDN fallback code.
 
+
 == Changelog ==
 
 = 1.0.0 =
-* Initial release (jQuery 3.5.1 library)
+* Initial release (jQuery 3.5.1 library with migrate 3.3.0)
+
 
 == Upgrade Notice ==
 
