@@ -11,15 +11,18 @@ License URI: https://opensource.org/licenses/MIT
 
 Use an updated version of jQuery with your WordPress powered website.
 
-== For WordPress Plugin Review ==
-
-In reference to:
-https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/#13-plugins-must-use-wordpress-default-libraries
-
-This plugin does not use the jQuery (or any) JavaScript library. Rather, it
-provides an updated version in a robust way for those who do wish to use a
-newer version. This plugin also intentionally does not load the newer jQuery
-on administrative pages.
+== Versioning Scheme ==
+Versions use an `Major.Minor.Patch scheme`. `Patch` is incremented by one when a
+minor change is made, such as adding new language support. Generally you can
+ignore upgrading plugin with a `Patch` bump. `Minor` is incremented by one when
+a bug is fixed or when an update to jQuery or the jQuery Migrate plugin is made
+that is not a substantial jQuery change. When the `Minor` is bumped, `Patch`
+will reset to `0`. Generally you should upgrade when `Minor` is bumped.
+`Major` will be incremented when there is an upgrade to jQuery that is
+significant in nature. Both `Minor` and `Patch` are reset to `0` when `Major`
+is bumped. Generally you should test an update to `Major` before updating on a
+production system just in case some of your jQuery code needs tweaks before
+deployment.
 
 == Description ==
 The jQuery that current ships as part of WordPress is (as of 5.4.1) an older
