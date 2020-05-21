@@ -6,6 +6,9 @@ Plugin for modern jQuery in WordPress.
 this branch is for cleaning up the code in preparation for WordPress.org
 submission.
 
+You can make a zip archive by executing the bash script `mkzip.sh` on a
+UNIX-ish system that has both `mktemp` and `zip` available.
+
 Current Status
 --------------
 
