@@ -30,6 +30,6 @@ it would be better for jQuery to be updated in a separate plugin from the theme,
 preferably a plugin that can be updated through WordPress itself.
 
 This is an attempt to create such a plugin with needed bells and whistles to do
-that. It is not yet ready for submission to their repository.
+that.
 
 See the `readme.txt` file.
