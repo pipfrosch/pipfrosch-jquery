@@ -350,7 +350,7 @@ function pipjq_activation() {
     $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
     $contents .= '  </FilesMatch>' . PHP_EOL;
     $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
-    file_put_contents($htaccess, $contents);
+    file_put_contents( $htaccess, $contents );
   }
   return;
 }
@@ -368,18 +368,18 @@ function pipjq_activation() {
  * @return void
  */
 function pipjq_settings_form_text_helpers() {
-  $string  = PHP_EOL . '<p>' . __('It is recommended that you enable the', 'pipfrosch-jquery');
+  $string  = PHP_EOL . '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   // Translators: Migrate is in reference to jQuery Migrate plugin
-  $string .= ' <em>' . __('Use Migrate Plugin', 'pipfrosch-jquery') . '</em> ';
-  $string .= __('option (default)', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
+  $string .= ' <em>' . __( 'Use Migrate Plugin', 'pipfrosch-jquery' ) . '</em> ';
+  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
   echo ( $string );
-  $string  = '<p>' . __('It is recommended that you enable the', 'pipfrosch-jquery');
-  $string .= ' <em>' . __('Use Content Distribution Network', 'pipfrosch-jquery') . '</em> ';
-  $string .= __('option', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
+  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= ' <em>' . __( 'Use Content Distribution Network', 'pipfrosch-jquery' ) . '</em> ';
+  $string .= __( 'option', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
   echo ( $string );
-  $string  = '<p>' . __('It is recommended that you enable the', 'pipfrosch-jquery');
-  $string .= ' <em>' . __('Use Subresource Integrity', 'pipfrosch-jquery') . '</em> ';
-  $string .= __('option (default)', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
+  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= ' <em>' . __( 'Use Subresource Integrity', 'pipfrosch-jquery' ) . '</em> ';
+  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
   echo ( $string );
 }
 
@@ -391,7 +391,7 @@ function pipjq_settings_form_text_helpers() {
 function pipjq_migrate_input_tag() {
   $migrate = pipjq_get_option_as_boolean( 'pipjq_migrate' );
   $checked = '';
-  if ($migrate) {
+  if ( $migrate ) {
     $checked = ' checked="checked"';
   }
   echo '<input type="checkbox" name="pipjq_migrate" id="pipjq_migrate" value="1"' . $checked . '>';
@@ -405,7 +405,7 @@ function pipjq_migrate_input_tag() {
 function pipjq_cdn_input_tag() {
   $cdn = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
   $checked = '';
-  if ($cdn) {
+  if ( $cdn ) {
     $checked = ' checked="checked"';
   }
   echo '<input type="checkbox" name="pipjq_cdn" id="pipjq_cdn" value="1"' . $checked . '>';
@@ -419,7 +419,7 @@ function pipjq_cdn_input_tag() {
 function pipjq_sri_input_tag() {
   $sri = pipjq_get_option_as_boolean( 'pipjq_sri' );
   $checked = '';
-  if ($sri) {
+  if ( $sri ) {
     $checked = ' checked="checked"';
   }
   echo '<input type="checkbox" name="pipjq_sri" id="pipjq_sri" value="1"' . $checked . '>';
@@ -433,15 +433,15 @@ function pipjq_sri_input_tag() {
 function pipjq_cdnhost_select_tag() {
   $cdnhost = pipjq_get_cdnhost_option();
   // translators: This array is of proper names and they do not get translated
-  $values = array('jQuery.com CDN',
-                  'CloudFlare CDNJS',
-                  'jsDelivr CDN',
-                  'Microsoft CDN',
-                  'Google CDN');
+  $values = array( 'jQuery.com CDN',
+                   'CloudFlare CDNJS',
+                   'jsDelivr CDN',
+                   'Microsoft CDN',
+                   'Google CDN' );
   $html = '<select name="pipjq_cdnhost" id="pipjq_cdnhost">' . PHP_EOL;
-  foreach($values as $value) {
+  foreach( $values as $value ) {
     $selected = '';
-    if ($cdnhost === $value) {
+    if ( $cdnhost === $value ) {
       $selected = ' selected="selected"';
     }
     $html .= '  <option value="' . $value . '"' . $selected . '>' . $value . '</option>' . PHP_EOL;
@@ -559,8 +559,8 @@ function pipjq_register_settings() {
  * @return void
  */
 function pipjq_register_options_page() {
-  add_options_page( 'jQuery ' . PIPJQV . ' ' . __('Options', 'pipfrosch-jquery'),
-                    'jQuery ' . __('Options', 'pipfrosch-jquery')',
+  add_options_page( 'jQuery ' . PIPJQV . ' ' . __( 'Options', 'pipfrosch-jquery' ),
+                    'jQuery ' . __( 'Options', 'pipfrosch-jquery' ),
                     'manage_options',
                     'pipfrosch_jquery',
                     'pipjq_options_page_form' );
