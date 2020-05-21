@@ -1,0 +1,117 @@
+# Copyright (C) 2020 Pipfrosch Press
+# This file is distributed under the same license as the Pipfrosch jQuery plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Pipfrosch jQuery 3.5.1pip0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pipfrosch-jquery\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2020-05-21T02:12:07+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: pipfrosch-jquery\n"
+
+#. Plugin Name of the plugin
+msgid "Pipfrosch jQuery"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://github.com/pipfrosch/pipfrosch-jquery"
+msgstr ""
+
+#. Description of the plugin
+msgid "Provides a modern jQuery environment for WordPress frontend"
+msgstr ""
+
+#. Author of the plugin
+msgid "Pipfrosch Press"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://pipfrosch.com/"
+msgstr ""
+
+#: inc/functions.php:371
+#: inc/functions.php:376
+#: inc/functions.php:380
+msgid "It is recommended that you enable the"
+msgstr ""
+
+#. Translators: Migrate is in reference to jQuery Migrate plugin
+#: inc/functions.php:373
+#: inc/functions.php:523
+msgid "Use Migrate Plugin"
+msgstr ""
+
+#. Translators: Migrate is in reference to jQuery Migrate plugin
+#: inc/functions.php:374
+#: inc/functions.php:382
+msgid "option (default)"
+msgstr ""
+
+#: inc/functions.php:377
+#: inc/functions.php:487
+#: inc/functions.php:530
+msgid "Use Content Distribution Network"
+msgstr ""
+
+#: inc/functions.php:378
+msgid "option"
+msgstr ""
+
+#: inc/functions.php:381
+#: inc/functions.php:485
+#: inc/functions.php:537
+msgid "Use Subresource Integrity"
+msgstr ""
+
+#: inc/functions.php:467
+msgid "disabled"
+msgstr ""
+
+#: inc/functions.php:469
+msgid "enabled"
+msgstr ""
+
+#: inc/functions.php:475
+msgid "Plugin Management"
+msgstr ""
+
+#: inc/functions.php:476
+msgid "Version"
+msgstr ""
+
+#. Translators: Migrate is in reference to jQuery Migrate plugin
+#: inc/functions.php:478
+msgid "Migrate Plugin Version"
+msgstr ""
+
+#. Translators: Migrate is in reference to jQuery Migrate plugin
+#: inc/functions.php:479
+msgid "Content Distribution Network"
+msgstr ""
+
+#: inc/functions.php:485
+msgid "Note that the"
+msgstr ""
+
+#: inc/functions.php:486
+msgid "option only has meaning when"
+msgstr ""
+
+#: inc/functions.php:488
+msgid "is enabled"
+msgstr ""
+
+#. Translators: CDN is an abbreviation and should not be translated
+#: inc/functions.php:545
+msgid "Select Public CDN Service"
+msgstr ""
+
+#: inc/functions.php:562
+#: inc/functions.php:563
+msgid "Options"
+msgstr ""

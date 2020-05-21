@@ -1,11 +1,22 @@
 <?php
 
-if ( ! defined( 'PIPFROSCH_JQUERY_PLUGIN_WEBPATH' ) ) { exit; }
+if ( ! defined( 'PIPJQ_PLUGIN_WEBPATH' ) ) { exit; }
 
-// boolean options are stored by plugin as strings in options API
-//  this function always returns a boolean and "fixes" the options value
-//  if not set or set to true instead of string
-function pipfrosch_jquery_getas_boolean( string $option, bool $default = true ) {
+/**
+ * Get an option as boolean value.
+ *
+ * This function queries the option and returns a boolean value representing
+ *  the option if the option has been set and returns a boolean default if the
+ *  option has not been set. It also sets the option to a string equivalent of
+ *  the boolean default (a "0" for false or a "1" for true) if the option is
+ *  not set.
+ *
+ * @param string The name of the option to query.
+ * @param bool   The default value to return and set if the option is not set.
+ *
+ * @return bool
+ */
+function pipjq_get_option_as_boolean( string $option, bool $default = true ) {
   $test = get_option( $option );
   if ( is_bool( $test ) ) {
     if ( $test ) {
@@ -27,8 +38,21 @@ function pipfrosch_jquery_getas_boolean( string $option, bool $default = true ) 
   return true;
 }
 
-// the callback to sanitize cdnhost string
-function pipfrosch_press_sanitize_cdnhost( $input ) {
+// the sanitizes cdnhost string
+
+/**
+ * Sanitize CDN host string
+ *
+ * This WordPress uses a fixed set public Content Distribution Networks.
+ *  This function eats an input and outputs a sanitized version that matches
+ *  the case sensitivity expected, returning the default CDN if it can not
+ *  identify which CDN is intended in the input.
+ *
+ * @param string The CDN host string to sanitize.
+ *
+ * @return string
+ */
+function pipjq_sanitize_cdnhost( string $input ) {
   $input = strtolower( sanitize_text_field( $input ) );
   switch( $input ) {
     case 'microsoft cdn':
@@ -47,23 +71,49 @@ function pipfrosch_press_sanitize_cdnhost( $input ) {
   return 'jQuery.com CDN';
 }
 
-// returns the CDN host and sets it if it is not set
-function pipfrosch_jquery_getstring_cdnhost() {
-  $default = pipfrosch_press_sanitize_cdnhost( 'use default' );
-  $test = get_option( 'pipfrosch_jquery_cdnhost' );
+/**
+ * Get CDN host option and return as sanitized string.
+ *
+ * This function queries the option setting for the CDN host to use
+ *  and sanitizes the result. In the event that the option is not
+ *  yet set, it sets the option to the default value as returned by
+ *  the pipjq_sanitize_cdnhost() function. In the event that the
+ *  sanitized option returned differs from what is stored as in the
+ *  WordPress options database for this setting, the WordPress option
+ *  is updated with the sanitized version.
+ *
+ * @return string
+ */
+function pipjq_get_cdnhost_option() {
+  $default = pipjq_sanitize_cdnhost( 'use default' );
+  $test = get_option( 'pipjq_cdnhost' );
   if (! is_string ( $test ) ) {
-    add_option( 'pipfrosch_jquery_cdnhost', $default );
+    add_option( 'pipjq_cdnhost', $default );
     return $default;
   }
-  $clean = pipfrosch_press_sanitize_cdnhost( $test );
+  $clean = pipjq_sanitize_cdnhost( $test );
   if ( $clean !== $test ) {
-    update_option( 'pipfrosch_jquery_cdnhost', $clean );
+    update_option( 'pipjq_cdnhost', $clean );
   }
   return $clean;
 }
 
-// the callback to sanitize checkbox string - currently broken
-function pipfrosch_press_sanitize_checkbox( $input ) {
+// the callback to sanitize checkbox string
+
+/**
+ * Sanitize checkbox input.
+ *
+ * This plugin likes the faux boolean options set to be a string of "0" for false
+ *  and "1" for true. The form sets a value a "1" when checked. If a string that
+ *  evaluates as the integer 1 when recast to integer is supplies, this function
+ *  will output the string "1". Any other value and it outputs the string "0".
+ *
+ * @param string The string passed to this callback from the WordPress options form
+ *               processing.
+ *
+ * @return string
+ */
+function pipjq_sanitize_checkbox( string $input ) {
   $input = sanitize_text_field( $input );
   if ( is_numeric( $input ) ) {
     $num = intval( $input );
@@ -75,49 +125,111 @@ function pipfrosch_press_sanitize_checkbox( $input ) {
 }
 
 /* initiate options */
-function pipfrosch_jquery_initiate_options() {
-  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
-  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
-  $foo = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
-  $foo = pipfrosch_jquery_getstring_cdnhost();
+
+/**
+ * Initialize options
+ *
+ * This function makes sure the options are defined in the WordPress options
+ *  database and sets them to the default values if they are not already
+ *  defined. This script is run during plugin activation.
+ *
+ * @return void
+ */
+function pipjq_initialize_options() {
+  $foo = pipjq_get_option_as_boolean( 'pipjq_migrate' );
+  $foo = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
+  $foo = pipjq_get_option_as_boolean( 'pipjq_sri' );
+  $foo = pipjq_get_cdnhost_option();
 }
 
-/* provide fallback if jQuery does not load from CDN */
-function pipfrosch_jquery_fallback( $core = true ) {
+/**
+ * Fallback for a CDN failure.
+ *
+ * In the event that a client can not retrieve the needed jQuery file from a CDN or
+ *  it retrieves the file but the SRI does not match, a website will be broken without
+ *  a fallback. This function provides a small HTML snippet for a script that verifies
+ *  retrieval of the jQuery library or the jQuery Migrate plugin was successful, and
+ *  instructs the client to download the copy served from the local website if it was
+ *  not.
+ *
+ * @param bool When true, the HTML snippet is for testing the main jQuery library. When
+ *             false, it is for testing the Migrate plugin.
+ *
+ * @return string
+ */
+function pipjq_fallback_for_cdn_failure( bool $core = true ) {
   $html = '<script>' . PHP_EOL . '  // Fallback to load locally if CDN fails' . PHP_EOL;
   if ($core) {
-    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"><\/script>\'));' . PHP_EOL;
+    $html .= '  (window.jQuery || document.write(\'<script src="' . PIPJQ_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"><\/script>\'));' . PHP_EOL;
   } else {
     $html .= '  if (typeof jQuery.migrateWarnings == \'undefined\') {' . PHP_EOL;
-    $html .= '    document.write(\'<script src="' . PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"><\/script>\');' . PHP_EOL;
+    $html .= '    document.write(\'<script src="' . PIPJQ_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js"><\/script>\');' . PHP_EOL;
     $html .= '  }' . PHP_EOL;
   }
   $html .= '</script>' . PHP_EOL;
   return $html;
 }
 
-/* The following two functions are only used with the jQuery CDN.
-   The first is used if SRI is enabled (recommended), the second
-   if SRI is disabled */
-function pipfrosch_jquery_add_jquery_sri( $tag, $handle, $source ) {
+/**
+ * Add the SRI and CrossOrigin attributes
+ *
+ * The WordPress core function `wp_register_script()` does not provide a means
+ *  for adding attributes to a script node. When a script is served from a third
+ *  party resource, it really needs to have both an `integrity` and a
+ *  `crossorigin` attribute set so the browser can validate both the integrity of
+ *  the resource being downloaded from the third party, and what authentication
+ *  should be performed (always anonymous for a public CDN, which at least with
+ *  some browsers means cookies are not set or sent even if they exist. Yay for
+ *  privacy). This function is used as a callback in a the WordPress
+ *  `script_loader_tag` to rewrite the <script></script> node with the appropriate
+ *  attributes for both SRI and CrossOrigin, along with the fallback HTML snippet
+ *  from the `pipjq_fallback_for_cdn_failure()` function.
+ *
+ * @param string The original version of the script tag.
+ * @param string The handle that was used to register the script associated with
+ *               the tag in the first parameter.
+ * @param string The contents of the `src` attribute in the tag from the first
+ *               parameter.
+ *
+ * @return string
+ */
+function pipjq_add_sri_attributes( string $tag, string $handle, string $source ) {
   switch( $handle ) {
     case 'jquery-core':
-      $html = pipfrosch_jquery_fallback();
+      $html = pipjq_fallback_for_cdn_failure();
       return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
       break;
     case 'jquery-migrate':
-      $html = pipfrosch_jquery_fallback( false );
+      $html = pipjq_fallback_for_cdn_failure( false );
       return '<script src="' . $source . '" integrity="' . PIPJQMIGRATESRI . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
   }
   return $tag;
 }
-function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
+
+/**
+ * Add CrossOrigin attribute
+ *
+ * There are a valid reasons why a webmaster may not want this WordPress plugin
+ *  adding the SRI tag. For example, they may have a different plugin that already
+ *  does that from a database. In such cases, the CrossOrigin attribute should
+ *  still be added, along with the fallback HTML snippet. This function does that.
+ *  See the PHPdoc header for pipjq_add_sri_attributes().
+ *
+ * @param string The original version of the script tag.
+ * @param string The handle that was used to register the script associated with
+ *               the tag in the first parameter.
+ * @param string The contents of the `src` attribute in the tag from the first
+ *               parameter.
+ *
+ * @return string
+ */
+function pipjq_add_crossorigin_attribute( string $tag, string $handle, string $source ) {
   switch( $handle ) {
     case 'jquery-core':
-      $html = pipfrosch_jquery_fallback();
+      $html = pipjq_fallback_for_cdn_failure();
       break;
     case 'jquery-migrate':
-      $html = pipfrosch_jquery_fallback( false );
+      $html = pipjq_fallback_for_cdn_failure( false );
       break;
     default:
       return $tag;
@@ -125,7 +237,19 @@ function pipfrosch_jquery_add_jquery_crossorigin( $tag, $handle, $source ) {
   return '<script src="' . $source . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
 }
 
-function pipfrosch_jquery_source( string $cdnhost="localhost" ) {
+/**
+ * Generate src attribute for the script nodes.
+ *
+ * This function creates the appropriate `src` attribute needed to register the
+ *  jQuery and Migrate scripts with WordPress based upon the CDN choice. It returns
+ *  an object with those strings as properties, and also a boolean property that
+ *  specifies whether or not the `src` attributes are for a CDN.
+ *
+ * @param string The name of the CDN host.
+ *
+ * @return stdClass
+ */
+function pipjq_script_src( string $cdnhost="localhost" ) {
   $rs = new stdClass();
   switch( $cdnhost ) {
     case 'jQuery.com CDN':
@@ -155,24 +279,34 @@ function pipfrosch_jquery_source( string $cdnhost="localhost" ) {
       $rs->cdn = true;
       break;
     default:
-      $rs->jquery  = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js';
-      $rs->migrate = PIPFROSCH_JQUERY_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js';
+      $rs->jquery  = PIPJQ_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js';
+      $rs->migrate = PIPJQ_PLUGIN_WEBPATH . 'jquery-migrate-' . PIPJQMIGRATE . '.min.js';
       $rs->cdn = false;
   }
   return $rs;
 }
 
-// defines the included jQuery to be served
-function pipfrosch_jquery_update_core_jquery() {
+/**
+ * Update WordPress Core JavaScript
+ *
+ * This is the heart of this WordPress plugin. This function will deregister the
+ *  versions of jQuery and jQuery Migrate that ship with WordPress Core and
+ *  register the more modern versions that ship with this plugin, either locally
+ *  or from a CDN, with the appropriate attributes and fallback HTML when served
+ *  from a CDN.
+ *
+ * @return void
+ */
+function pipjq_update_wpcore_jquery() {
   //get the settings and validate
-  $migrate = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
-  $cdn     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
-  $sri     = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
+  $migrate = pipjq_get_option_as_boolean( 'pipjq_migrate' );
+  $cdn     = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
+  $sri     = pipjq_get_option_as_boolean( 'pipjq_sri' );
   $cdnhost = 'localhost';
   if ( $cdn ) {
-    $cdnhost = pipfrosch_jquery_getstring_cdnhost();
+    $cdnhost = pipjq_get_cdnhost_option();
   }
-  $srcuri = pipfrosch_jquery_source( $cdnhost );
+  $srcuri = pipjq_script_src( $cdnhost );
   //act on options
   wp_deregister_script( 'jquery-core' );
   wp_deregister_script( 'jquery-migrate' );
@@ -182,17 +316,29 @@ function pipfrosch_jquery_update_core_jquery() {
   }
   if ( $srcuri->cdn ) {
     if ( $sri ) {
-      add_filter( 'script_loader_tag', 'pipfrosch_jquery_add_jquery_sri', 10, 3 );
+      add_filter( 'script_loader_tag', 'pipjq_add_sri_attributes', 10, 3 );
     } else {
-      add_filter( 'script_loader_tag', 'pipfrosch_jquery_add_jquery_crossorigin', 10, 3 );
+      add_filter( 'script_loader_tag', 'pipjq_add_crossorigin_attribute', 10, 3 );
     }
   }
 }
 
-// initiated options and creates the .htaccess file. I do not like including a .htaccess within a plugin zip archive.
-function pipfrosch_jquery_set_expires_header() {
-  pipfrosch_jquery_initiate_options();
-  $htaccess = PIPFROSCH_JQUERY_PLUGIN_DIR . ".htaccess";
+/**
+ * Plugin activation script.
+ *
+ * When activating the plugin this function is run. It will initialize the options
+ *  this plugin uses to their default values (unless already set) and if the server
+ *  has write permission to the directory for this plugin *and* a `.htaccess` file
+ *  does not already exist in it, it will create a `.htaccess` file that is
+ *  compatible with the Apache 2 `mod_expires.c` module so that jQuery and the
+ *  Migrate plugin are served with a header telling the client it can cache those
+ *  files for up to a year.
+ *
+ * @return void
+ */
+function pipjq_activation() {
+  pipjq_initialize_options();
+  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
     return;
@@ -204,52 +350,98 @@ function pipfrosch_jquery_set_expires_header() {
     $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
     $contents .= '  </FilesMatch>' . PHP_EOL;
     $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
-    file_put_contents($htaccess, $contents);
+    file_put_contents( $htaccess, $contents );
   }
   return;
 }
 
-//settings
+/* functions specific to the WordPress Settings API */
 
 // the callback for add_settings_section
-function cbfn_pipfrosch_jquery_add_settings_section() {
-  echo ('<p>It is recommended that you enable the ‘Use Migrate Plugin’ option (default).</p>');
-  echo ('<p>It is recommended that you enable the ‘Use Content Distribution Network’ option.</p>');
-  echo ('<p>It is recommended that you enable the ‘Use Subresource Integrity’ option (default).</p>');
+
+/**
+ * Settings form helpers
+ *
+ * Callback function used by the WordPress core function `add_settings_section()`
+ *  to provide some recommendations for the plugin settings.
+ *
+ * @return void
+ */
+function pipjq_settings_form_text_helpers() {
+  $string  = PHP_EOL . '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  // Translators: Migrate is in reference to jQuery Migrate plugin
+  $string .= ' <em>' . __( 'Use Migrate Plugin', 'pipfrosch-jquery' ) . '</em> ';
+  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
+  echo ( $string );
+  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= ' <em>' . __( 'Use Content Distribution Network', 'pipfrosch-jquery' ) . '</em> ';
+  $string .= __( 'option', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
+  echo ( $string );
+  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= ' <em>' . __( 'Use Subresource Integrity', 'pipfrosch-jquery' ) . '</em> ';
+  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
+  echo ( $string );
 }
 
-// render migrate
-function pipfrosch_jquery_render_migrate() {
-  $migrate = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_migrate' );
+/**
+ * Generate checkbox input HTML snippet for the ‘Use Migrate Plugin’ option.
+ *
+ * @return void
+ */
+function pipjq_migrate_input_tag() {
+  $migrate = pipjq_get_option_as_boolean( 'pipjq_migrate' );
   $checked = '';
-  if ($migrate) {
+  if ( $migrate ) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosch_jquery_migrate" id="pipfrosch_jquery_migrate" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipjq_migrate" id="pipjq_migrate" value="1"' . $checked . '>';
 }
 
-// render cdn
-function pipfrosch_jquery_render_cdn() {
-  $cdn = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
+/**
+ * Generate checkbox input HTML snippet for the ‘Use Content Distribution Network’ option.
+ *
+ * @return void
+ */
+function pipjq_cdn_input_tag() {
+  $cdn = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
   $checked = '';
-  if ($cdn) {
+  if ( $cdn ) {
     $checked = ' checked="checked"';
   }
-  echo '<input type="checkbox" name="pipfrosch_jquery_cdn" id="pipfrosch_jquery_cdn" value="1"' . $checked . '>';
+  echo '<input type="checkbox" name="pipjq_cdn" id="pipjq_cdn" value="1"' . $checked . '>';
 }
 
-// render cdnhost
-function pipfrosch_jquery_render_cdnhost() {
-  $cdnhost = pipfrosch_jquery_getstring_cdnhost();
-  $values = array('jQuery.com CDN',
-                  'CloudFlare CDNJS',
-                  'jsDelivr CDN',
-                  'Microsoft CDN',
-                  'Google CDN');
-  $html = '<select name="pipfrosch_jquery_cdnhost" id="pipfrosch_jquery_cdnhost">' . PHP_EOL;
-  foreach($values as $value) {
+/**
+ * Generate checkbox input HTML snippet for the ‘Use Subresource Integrity’ option.
+ *
+ * @return void
+ */
+function pipjq_sri_input_tag() {
+  $sri = pipjq_get_option_as_boolean( 'pipjq_sri' );
+  $checked = '';
+  if ( $sri ) {
+    $checked = ' checked="checked"';
+  }
+  echo '<input type="checkbox" name="pipjq_sri" id="pipjq_sri" value="1"' . $checked . '>';
+}
+
+/**
+ * Generate select and child option tag HTML snippet for the ‘Select Public CDN Service’ menu.
+ *
+ * @return void
+ */
+function pipjq_cdnhost_select_tag() {
+  $cdnhost = pipjq_get_cdnhost_option();
+  // translators: This array is of proper names and they do not get translated
+  $values = array( 'jQuery.com CDN',
+                   'CloudFlare CDNJS',
+                   'jsDelivr CDN',
+                   'Microsoft CDN',
+                   'Google CDN' );
+  $html = '<select name="pipjq_cdnhost" id="pipjq_cdnhost">' . PHP_EOL;
+  foreach( $values as $value ) {
     $selected = '';
-    if ($cdnhost === $value) {
+    if ( $cdnhost === $value ) {
       $selected = ' selected="selected"';
     }
     $html .= '  <option value="' . $value . '"' . $selected . '>' . $value . '</option>' . PHP_EOL;
@@ -258,92 +450,118 @@ function pipfrosch_jquery_render_cdnhost() {
   echo $html;
 }
 
-// render sri
-function pipfrosch_jquery_render_sri() {
-  $sri = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_sri' );
-  $checked = '';
-  if ($sri) {
-    $checked = ' checked="checked"';
-  }
-  echo '<input type="checkbox" name="pipfrosch_jquery_sri" id="pipfrosch_jquery_sri" value="1"' . $checked . '>';
-}
-
-function cbfn_pipfrosch_jquery_options_page() {
-  $cdn = pipfrosch_jquery_getas_boolean( 'pipfrosch_jquery_cdn', false );
-  $parenthesis = '(disabled)';
+/**
+ * Creates the HTML needed for the Settings API form.
+ *
+ * This function notifies the administrator what version of the core jQuery library and
+ *  jQuery Migrate plugin are made available, as well as what Content Distribution Network
+ *  is currently configured to be used. It then creates the HTML <form/> node that an
+ *  administrator can use to change the settings associated with this WordPress plugin.
+ *  This function is called as a callback by the WordPress core function `add_options_page()`
+ *  to make the form available in the Settings menu.
+ *
+ * @return void
+ */
+function pipjq_options_page_form() {
+  $cdn = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
+  $parenthesis = '(' . __( 'disabled', 'pipfrosch-jquery' ) . ')';
   if ( $cdn ) {
-    $parenthesis = '(enabled)';
+    $parenthesis = '(' . __( 'enabled', 'pipfrosch-jquery' ) . ')';
   }
-  $cdnhost = pipfrosch_jquery_getstring_cdnhost();
+  $cdnhost = pipjq_get_cdnhost_option();
   $s = array( '/CDN$/' , '/CDNJS/' );
   $r = array( '<abbr>CDN</abbr>' , '<abbr>CDNJS</abbr>' );
   $cdnhost = preg_replace($s, $r, $cdnhost);
-  $html  = '    <h2>Pipfrosch jQuery Plugin Management</h2>' . PHP_EOL;
-  $html .= '    <p>jQuery Version: ' . PIPJQV . '</p>' . PHP_EOL;
-  $html .= '    <p>jQuery Migrate Plugin Version: ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
-  $html .= '    <p>Current <abbr title="Content Distribution Network">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
+  $html  = '    <h2>Pipfrosch jQuery ' . __('Plugin Management', 'pipfrosch-jquery') . '</h2>' . PHP_EOL;
+  $html .= '    <p>jQuery ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQV . '</p>' . PHP_EOL;
+  // Translators: Migrate is in reference to jQuery Migrate plugin
+  $html .= '    <p>jQuery ' . __( 'Migrate Plugin Version', 'pipfrosch-jquery') . ': ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
+  $html .= '    <p>' . __( 'Current', '') . ' <abbr title="' . esc_attr__( 'Content Distribution Network' , 'pipfrosch-jquery');
+  $html .= '">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
   $html .= '    <form method="post" action="options.php">' . PHP_EOL;
   echo $html;
-  settings_fields( PPJQ_OPTIONS_GROUP );
-  do_settings_sections( PPJQ_SETTINGS_PAGE_SLUG_NAME );
-  $html  = '      <p>Note that the ‘Use Subresource Integrity’ option only has meaning when ‘Use Content Distribution Network’ is enabled.</p>' . PHP_EOL;
+  settings_fields( PIPJQ_OPTIONS_GROUP );
+  do_settings_sections( PIPJQ_SETTINGS_PAGE_SLUG_NAME );
+  $html  = '      <p>' . __( 'Note that the', 'pipfrosch-jquery' ) . ' <em>' . __( 'Use Subresource Integrity', 'pipfrosch-jquery' );
+  $html .= '</em> ' . __( 'option only has meaning when', 'pipfrosch-jquery' ) . ' <em>';
+  $html .= __( 'Use Content Distribution Network', 'pipfrosch-jquery' ) . '</em> ';
+  $html .= __( 'is enabled', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
   $html .= get_submit_button() . PHP_EOL;
   $html .= '    </form>' . PHP_EOL;
   echo $html;
 }
 
-function pipfrosch_jquery_register_settings() {
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_migrate',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_cdn',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_sri',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_checkbox' ) );
-  register_setting( PPJQ_OPTIONS_GROUP,
-                    'pipfrosch_jquery_cdnhost',
-                    array( 'sanitize_callback' => 'pipfrosch_press_sanitize_cdnhost' ) );
+/**
+ * Set up the WordPress Settings API.
+ *
+ * This function is a callback added to the `admin_init` action by the WordPress
+ *  Core function `add_action()` function used in the main plugin PHP script.
+ *
+ * @return void
+ */
+function pipjq_register_settings() {
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_migrate',
+                    array( 'sanitize_callback' => 'pipjq_sanitize_checkbox' ) );
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_cdn',
+                    array( 'sanitize_callback' => 'pipjq_sanitize_checkbox' ) );
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_sri',
+                    array( 'sanitize_callback' => 'pipjq_sanitize_checkbox' ) );
+  register_setting( PIPJQ_OPTIONS_GROUP,
+                    'pipjq_cdnhost',
+                    array( 'sanitize_callback' => 'pipjq_sanitize_cdnhost' ) );
 
-  add_settings_section( PPJQ_SECTION_SLUG_NAME,
+  add_settings_section( PIPJQ_SECTION_SLUG_NAME,
                         'Plugin Options',
-                        'cbfn_pipfrosch_jquery_add_settings_section',
-                        PPJQ_SETTINGS_PAGE_SLUG_NAME );
+                        'pipjq_settings_form_text_helpers',
+                        PIPJQ_SETTINGS_PAGE_SLUG_NAME );
 
-  add_settings_field( 'pipfrosch_jquery_migrate',
-                      'Use Migrate Plugin',
-                      'pipfrosch_jquery_render_migrate',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array('label_for' => 'pipfrosch_jquery_migrate' ) );
+  // Translators: Migrate is in reference to jQuery Migrate plugin
+  add_settings_field( 'pipjq_migrate',
+                      __( 'Use Migrate Plugin' , 'pipfrosch-jquery' ),
+                      'pipjq_migrate_input_tag',
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array('label_for' => 'pipjq_migrate' ) );
 
-  add_settings_field( 'pipfrosch_jquery_cdn',
-                      'Use Content Distribution Network',
-                      'pipfrosch_jquery_render_cdn',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array( 'label_for' => 'pipfrosch_jquery_cdn' ) );
+  add_settings_field( 'pipjq_cdn',
+                      __( 'Use Content Distribution Network', 'pipfrosch-jquery' ),
+                      'pipjq_cdn_input_tag',
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array( 'label_for' => 'pipjq_cdn' ) );
 
-  add_settings_field( 'pipfrosch_jquery_sri',
-                      'Use Subresource Integrity',
-                      'pipfrosch_jquery_render_sri',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array( 'label_for' => 'pipfrosch_jquery_sri' ) );
+  add_settings_field( 'pipjq_sri',
+                      __( 'Use Subresource Integrity', 'pipfrosch-jquery' ),
+                      'pipjq_sri_input_tag',
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array( 'label_for' => 'pipjq_sri' ) );
 
-  add_settings_field( 'pipfrosch_jquery_cdnhost',
-                      'Select Public CDN Service',
-                      'pipfrosch_jquery_render_cdnhost',
-                      PPJQ_SETTINGS_PAGE_SLUG_NAME,
-                      PPJQ_SECTION_SLUG_NAME,
-                      array( 'label_for' => 'pipfrosch_jquery_cdnhost' ) );
+  // Translators: CDN is an abbreviation and should not be translated
+  add_settings_field( 'pipjq_cdnhost',
+                      __( 'Select Public CDN Service', 'pipfrosch-jquery' ),
+                      'pipjq_cdnhost_select_tag',
+                      PIPJQ_SETTINGS_PAGE_SLUG_NAME,
+                      PIPJQ_SECTION_SLUG_NAME,
+                      array( 'label_for' => 'pipjq_cdnhost' ) );
 }
 
-function pipfrosch_jquery_register_options_page() {
-  add_options_page( 'jQuery ' . PIPJQV . ' Options',
-                    'jQuery Options',
+/**
+ * Registers the Settings API form for changing options.
+ *
+ * Basically just wraps the WordPress Core function `add_options_page()`
+ *  in a callback added to the `admin_menu` action by the WordPress
+ *  Core function `add_action()` function used in the main plugin PHP script.
+ *
+ * @return void
+ */
+function pipjq_register_options_page() {
+  add_options_page( 'jQuery ' . PIPJQV . ' ' . __( 'Options', 'pipfrosch-jquery' ),
+                    'jQuery ' . __( 'Options', 'pipfrosch-jquery' ),
                     'manage_options',
                     'pipfrosch_jquery',
-                    'cbfn_pipfrosch_jquery_options_page' );
+                    'pipjq_options_page_form' );
 }
