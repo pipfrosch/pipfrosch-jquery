@@ -11,6 +11,16 @@ License URI: https://opensource.org/licenses/MIT
 
 Use an updated version of jQuery with your WordPress powered website.
 
+== For WordPress Plugin Review ==
+
+In reference to:
+https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/#13-plugins-must-use-wordpress-default-libraries
+
+This plugin does not use the jQuery (or any) JavaScript library. Rather, it
+provides an updated version in a robust way for those who do wish to use a
+newer version. This plugin also intentionally does not load the newer jQuery
+on administrative pages.
+
 == Description ==
 The jQuery that current ships as part of WordPress is (as of 5.4.1) an older
 version of jQuery. As in ancient. This plugins allows you to instead use a much
