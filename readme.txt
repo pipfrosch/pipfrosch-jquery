@@ -120,8 +120,3 @@ the donate page if a new version of jQuery is out and I have not updated.
 For the included jQuery Migrate plugin, I am less likely to notice when new
 versions are available but I do check whenever a new version of jQuery itself
 is released. Again you can bug me if needed.
-
-== Translators ==
-Please fork https://github.com/pipfrosch/pipfrosch-jquery and make a pull
-request.
-

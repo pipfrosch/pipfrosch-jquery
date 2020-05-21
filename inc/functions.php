@@ -369,6 +369,7 @@ function pipjq_activation() {
  */
 function pipjq_settings_form_text_helpers() {
   $string  = PHP_EOL . '<p>' . __('It is recommended that you enable the', 'pipfrosch-jquery');
+  // Translators: Migrate is in reference to jQuery Migrate plugin
   $string .= ' <em>' . __('Use Migrate Plugin', 'pipfrosch-jquery') . '</em> ';
   $string .= __('option (default)', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
   echo ( $string );
@@ -473,6 +474,7 @@ function pipjq_options_page_form() {
   $cdnhost = preg_replace($s, $r, $cdnhost);
   $html  = '    <h2>Pipfrosch jQuery ' . __('Plugin Management', 'pipfrosch-jquery') . '</h2>' . PHP_EOL;
   $html .= '    <p>jQuery ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQV . '</p>' . PHP_EOL;
+  // Translators: Migrate is in reference to jQuery Migrate plugin
   $html .= '    <p>jQuery ' . __( 'Migrate Plugin Version', 'pipfrosch-jquery') . ': ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
   $html .= '    <p>' . __( 'Current', '') . ' <abbr title="' . esc_attr__( 'Content Distribution Network' , 'pipfrosch-jquery');
   $html .= '">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
@@ -516,6 +518,7 @@ function pipjq_register_settings() {
                         'pipjq_settings_form_text_helpers',
                         PIPJQ_SETTINGS_PAGE_SLUG_NAME );
 
+  // Translators: Migrate is in reference to jQuery Migrate plugin
   add_settings_field( 'pipjq_migrate',
                       __( 'Use Migrate Plugin' , 'pipfrosch-jquery' ),
                       'pipjq_migrate_input_tag',
