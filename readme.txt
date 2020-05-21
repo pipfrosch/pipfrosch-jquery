@@ -182,8 +182,8 @@ projects outside of Pipfrosch Press are difficult for me to commit to.
 
 == Changelog ==
 
-= 3.5.1pip0 =
-* Initial release (the 3.5.1 refers to jQuery library)
+= 1.0.0 =
+* Initial release (jQuery 3.5.1 library)
 
 == Upgrade Notice ==
 
