@@ -365,16 +365,21 @@ function pipjq_activation() {
  * Callback function used by the WordPress core function `add_settings_section()`
  *  to provide some recommendations for the plugin settings.
  *
- * @TODO These strings need to be internationalized. When internationalizing, the
- *       contents between the left and right curly quotes need to MATCH the strings
- *       used as labels in the corresponding `add_settings_field()` calls.
- *
  * @return void
  */
 function pipjq_settings_form_text_helpers() {
-  echo ('<p>It is recommended that you enable the ‘<em>Use Migrate Plugin</em>’ option (default).</p>');
-  echo ('<p>It is recommended that you enable the ‘<em>Use Content Distribution Network</em>’ option.</p>');
-  echo ('<p>It is recommended that you enable the ‘<em>Use Subresource Integrity</em>’ option (default).</p>');
+  $string  = PHP_EOL . '<p>' . __('It is recommended that you enable the', 'pipfrosch-jquery');
+  $string .= ' <em>' . __('Use Migrate Plugin', 'pipfrosch-jquery') . '</em> ';
+  $string .= __('option (default)', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
+  echo ( $string );
+  $string  = '<p>' . __('It is recommended that you enable the', 'pipfrosch-jquery');
+  $string .= ' <em>' . __('Use Content Distribution Network', 'pipfrosch-jquery') . '</em> ';
+  $string .= __('option', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
+  echo ( $string );
+  $string  = '<p>' . __('It is recommended that you enable the', 'pipfrosch-jquery');
+  $string .= ' <em>' . __('Use Subresource Integrity', 'pipfrosch-jquery') . '</em> ';
+  $string .= __('option (default)', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
+  echo ( $string );
 }
 
 /**
@@ -454,29 +459,31 @@ function pipjq_cdnhost_select_tag() {
  *  This function is called as a callback by the WordPress core function `add_options_page()`
  *  to make the form available in the Settings menu.
  *
- * @TODO Internationalization of the strings is needed.
- *
  * @return void
  */
 function pipjq_options_page_form() {
   $cdn = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
-  $parenthesis = '(disabled)';
+  $parenthesis = '(' . __( 'disabled', 'pipfrosch-jquery' ) . ')';
   if ( $cdn ) {
-    $parenthesis = '(enabled)';
+    $parenthesis = '(' . __( 'enabled', 'pipfrosch-jquery' ) . ')';
   }
   $cdnhost = pipjq_get_cdnhost_option();
   $s = array( '/CDN$/' , '/CDNJS/' );
   $r = array( '<abbr>CDN</abbr>' , '<abbr>CDNJS</abbr>' );
   $cdnhost = preg_replace($s, $r, $cdnhost);
-  $html  = '    <h2>Pipfrosch jQuery Plugin Management</h2>' . PHP_EOL;
-  $html .= '    <p>jQuery Version: ' . PIPJQV . '</p>' . PHP_EOL;
-  $html .= '    <p>jQuery Migrate Plugin Version: ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
-  $html .= '    <p>Current <abbr title="Content Distribution Network">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
+  $html  = '    <h2>Pipfrosch jQuery ' . __('Plugin Management', 'pipfrosch-jquery') . '</h2>' . PHP_EOL;
+  $html .= '    <p>jQuery ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQV . '</p>' . PHP_EOL;
+  $html .= '    <p>jQuery ' . __( 'Migrate Plugin Version', 'pipfrosch-jquery') . ': ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
+  $html .= '    <p>' . __( 'Current', '') . ' <abbr title="' . esc_attr__( 'Content Distribution Network' , 'pipfrosch-jquery');
+  $html .= '">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
   $html .= '    <form method="post" action="options.php">' . PHP_EOL;
   echo $html;
   settings_fields( PIPJQ_OPTIONS_GROUP );
   do_settings_sections( PIPJQ_SETTINGS_PAGE_SLUG_NAME );
-  $html  = '      <p>Note that the ‘Use Subresource Integrity’ option only has meaning when ‘Use Content Distribution Network’ is enabled.</p>' . PHP_EOL;
+  $html  = '      <p>' . __( 'Note that the', 'pipfrosch-jquery' ) . ' <em>' . __( 'Use Subresource Integrity', 'pipfrosch-jquery' );
+  $html .= '</em> ' . __( 'option only has meaning when', 'pipfrosch-jquery' ) . ' <em>';
+  $html .= __( 'Use Content Distribution Network', 'pipfrosch-jquery' ) . '</em> ';
+  $html .= __( 'is enabled', 'pipfrosch-jquery') . '.</p>' . PHP_EOL;
   $html .= get_submit_button() . PHP_EOL;
   $html .= '    </form>' . PHP_EOL;
   echo $html;
@@ -487,9 +494,6 @@ function pipjq_options_page_form() {
  *
  * This function is a callback added to the `admin_init` action by the WordPress
  *  Core function `add_action()` function used in the main plugin PHP script.
- *
- * @TODO The second arguments of the WordPress Core function `add_settings_field()`
- *       calls used within this function need to be internationalized.
  *
  * @return void
  */
@@ -513,28 +517,29 @@ function pipjq_register_settings() {
                         PIPJQ_SETTINGS_PAGE_SLUG_NAME );
 
   add_settings_field( 'pipjq_migrate',
-                      'Use Migrate Plugin',
+                      __( 'Use Migrate Plugin' , 'pipfrosch-jquery' ),
                       'pipjq_migrate_input_tag',
                       PIPJQ_SETTINGS_PAGE_SLUG_NAME,
                       PIPJQ_SECTION_SLUG_NAME,
                       array('label_for' => 'pipjq_migrate' ) );
 
   add_settings_field( 'pipjq_cdn',
-                      'Use Content Distribution Network',
+                      __( 'Use Content Distribution Network', 'pipfrosch-jquery' ),
                       'pipjq_cdn_input_tag',
                       PIPJQ_SETTINGS_PAGE_SLUG_NAME,
                       PIPJQ_SECTION_SLUG_NAME,
                       array( 'label_for' => 'pipjq_cdn' ) );
 
   add_settings_field( 'pipjq_sri',
-                      'Use Subresource Integrity',
+                      __( 'Use Subresource Integrity', 'pipfrosch-jquery' ),
                       'pipjq_sri_input_tag',
                       PIPJQ_SETTINGS_PAGE_SLUG_NAME,
                       PIPJQ_SECTION_SLUG_NAME,
                       array( 'label_for' => 'pipjq_sri' ) );
 
+  // Translators: CDN is an abbreviation and should not be translated
   add_settings_field( 'pipjq_cdnhost',
-                      'Select Public CDN Service',
+                      __( 'Select Public CDN Service', 'pipfrosch-jquery' ),
                       'pipjq_cdnhost_select_tag',
                       PIPJQ_SETTINGS_PAGE_SLUG_NAME,
                       PIPJQ_SECTION_SLUG_NAME,
@@ -548,13 +553,11 @@ function pipjq_register_settings() {
  *  in a callback added to the `admin_menu` action by the WordPress
  *  Core function `add_action()` function used in the main plugin PHP script.
  *
- * @TODO The word 'Options' in the first and second arguments should be internationalized.
- *
  * @return void
  */
 function pipjq_register_options_page() {
-  add_options_page( 'jQuery ' . PIPJQV . ' Options',
-                    'jQuery Options',
+  add_options_page( 'jQuery ' . PIPJQV . ' ' . __('Options', 'pipfrosch-jquery'),
+                    'jQuery ' . __('Options', 'pipfrosch-jquery')',
                     'manage_options',
                     'pipfrosch_jquery',
                     'pipjq_options_page_form' );
