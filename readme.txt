@@ -390,6 +390,9 @@ projects outside of Pipfrosch Press are difficult for me to commit to.
 
 == Changelog ==
 
+= 1.1.0 (???) =
+* Added jQuery Migrate SRI hash for CDNJS and jsDelivr.
+
 = 1.0.1 (Thursday May 21, 2020) =
 * Updated `readme.txt` to include links to Public CDN services and their privacy policies.
 * Other cleanup of documentation.
