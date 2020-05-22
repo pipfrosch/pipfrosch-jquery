@@ -12,6 +12,7 @@ License URI: https://opensource.org/licenses/MIT
 Use jQuery 3.5.1 and jQuery Migrate 3.3.0 with your WordPress powered website
 with a third party CDN if so desired.
 
+
 == Description ==
 
 The jQuery that current ships as part of WordPress is (as of WP 5.4.1) an older
@@ -209,32 +210,43 @@ option then the jQuery.com CDN will be used for the jQuery Migrate plugin.
 The Privacy Policy for that CDN is listed earlier in this `readme.txt` file.
 
 
-== Included Public Keys (SRI Hashes) ==
+== Hard-coded SRI Hashes ==
 
-This plugin includes the Subresource Identity public keys (hashes actually,
-they) for the minified versions of jQuery 3.5.1 and jQuery Migrate Plugin 3.3.0
-which are published on the https://code.jquery.com/ website.
+This plugin includes hard-coded Subresource Identity public hashes for the
+minified versions of the jQuery core library and the jQuery Migrate Plugin.
 
-The file `versions.php` hard-codes the public keys. The SRI values that are
-hard-coded in that file can be checked against the provided values at
-https://code.jquery.com/
+For a better understanding of what SRI is and why hard-coding the hashes is
+a necessary security feature, please see the file `SubResourceIntegrity.md`
+in this directory.
 
-= CloudFlare CDNJS =
+The hard-coded hashes can be verified against what is published at the
+https://code.jquery.com/ website.
+
+Click on the minified link for the same version of jQuery (3.5.1) and a window
+will pop up with a script tag including the same SRI as what is defined by the
+`PIPJQVSRI` constant in `versions.php`.
+
+Click on the minified link for the same version of jQuery Migrate (3.3.0) and
+a window will pop up with a script tag including the same SRI as what is
+defined by the
+`PIPJQMIGRATESRI` constant in `versions.php`.
+
+= CloudFlare CDNJS and jdDeliver CDN =
 
 The minified jQuery Migrate plugin hosted at CloudFlare CDNJS and jsDelivr CDN
-have the following addition at the end of the file:
+have the following addition at the end of the JS file:
 
     //# sourceMappingURL=jquery-migrate.min.map
 
 For this reason, an SRI specific to them is used when CloudFlare CDNJS or
 jsDelivr CDN is the selected Public CDN.
 
-= Security Reason for Hard Coding SRI Hashes =
+This SRI value can be obtained from https://cdnjs.com/libraries/jquery-migrate
 
-For security reasons, it is not safe for these SRI hash values to be stored in
-the database where an SQLi, XSS, or CSRF attack against an administrator could
-result in their values being altered. These values really do need to be
-hard-coded and defined as a PHP constant.
+Mouse over the minified version and from the menu that appears select `Copy
+SRI` and the SRI that matches the file they serve will be copied to your
+clipboard and if the version is the same, it will match what is defined by the
+`PIPJQMIGRATESRI_CDNJS` constant in `versions.php`.
 
 
 == Public CDN Notes ==
