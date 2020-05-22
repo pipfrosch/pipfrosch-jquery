@@ -12,6 +12,7 @@ License URI: https://opensource.org/licenses/MIT
 Use jQuery 3.5.1 and jQuery Migrate 3.3.0 with your WordPress powered website
 with a third party CDN if so desired.
 
+
 == Description ==
 
 The jQuery that current ships as part of WordPress is (as of WP 5.4.1) an older
@@ -209,22 +210,43 @@ option then the jQuery.com CDN will be used for the jQuery Migrate plugin.
 The Privacy Policy for that CDN is listed earlier in this `readme.txt` file.
 
 
-== Included Public Keys ==
+== Hard-coded SRI Hashes ==
 
-This plugin includes the Subresource Identity public keys (hashes actually,
-they) for the minified versions of jQuery 3.5.1 and jQuery Migrate Plugin 3.3.0
-which are published on the https://code.jquery.com/ website.
+This plugin includes hard-coded Subresource Identity public hashes for the
+minified versions of the jQuery core library and the jQuery Migrate Plugin.
 
-The file `versions.php` hard-codes the public keys. The SRI values that are
-hard-coded in that file can be checked against the provided values at
-https://code.jquery.com/
+For a better understanding of what SRI is and why hard-coding the hashes is
+a necessary security feature, please see the file `SubResourceIntegrity.md`
+in this directory.
 
-= Security Reason for Hard Coding =
+The hard-coded hashes can be verified against what is published at the
+https://code.jquery.com/ website.
 
-For security reasons, it is not safe for these SRI hash values to be stored in
-the database where an SQLi, XSS, or CSRF attack against an administrator could
-result in their values being altered. These values really do need to be
-hard-coded and defined as a PHP constant.
+Click on the minified link for the same version of jQuery (3.5.1) and a window
+will pop up with a script tag including the same SRI as what is defined by the
+`PIPJQVSRI` constant in `versions.php`.
+
+Click on the minified link for the same version of jQuery Migrate (3.3.0) and
+a window will pop up with a script tag including the same SRI as what is
+defined by the
+`PIPJQMIGRATESRI` constant in `versions.php`.
+
+= CloudFlare CDNJS and jdDeliver CDN =
+
+The minified jQuery Migrate plugin hosted at CloudFlare CDNJS and jsDelivr CDN
+have the following addition at the end of the JS file:
+
+    //# sourceMappingURL=jquery-migrate.min.map
+
+For this reason, an SRI specific to them is used when CloudFlare CDNJS or
+jsDelivr CDN is the selected Public CDN.
+
+This SRI value can be obtained from https://cdnjs.com/libraries/jquery-migrate
+
+Mouse over the minified version and from the menu that appears select `Copy
+SRI` and the SRI that matches the file they serve will be copied to your
+clipboard and if the version is the same, it will match what is defined by the
+`PIPJQMIGRATESRI_CDNJS` constant in `versions.php`.
 
 
 == Public CDN Notes ==
@@ -238,17 +260,6 @@ from your host until the Microsoft CDN has them.
 The Google CDN does not host any version of the jQuery Migrate plugin. If you
 select that option and have the Migrate plugin enabled, that plugin will be
 served from the jQuery.com CDN.
-
-The jsDelivr CDN and CloudFlare CDNJS have the current core jQuery library and
-they pass SRI however the Migrate plugin they host, even though the version
-number appears to be identical, has a different checksum. It is my *suspicion*
-they are minifying the Migrate plugin themselves with a slightly different
-algorithm rather than using the minified version of that plugin as provided by
-jQuery.com. I will attempt to communicate with them and see if I can get them
-to start using the minified version as supplied by jQuery.com but at this time
-if you select either of those options and have the Migrate plugin enabled, the
-version they host will fail the SRI test causing the client browser to fetch it
-from your server instead.
 
 
 == Plugin / Theme Compatibility ==
@@ -285,25 +296,25 @@ from WordPress is audited by more eyes than my github.
 
 
 == Versioning Scheme ==
-Versions use an `Major.Minor.Patch` scheme` using integers for each. Code in
+Versions use an `Major.Minor.Tweak` scheme` using integers for each. Code in
 github may have a `pre` appended at the end to indicate is not a released
 version and should not be used on production systems.
 
-= Patch bump =
-`Patch` is incremented by one when a minor change is made, such as adding a new
+= Tweak bump =
+`Tweak` is incremented by one when a minor change is made, such as adding a new
 language to the translation support. Generally you can ignore upgrading this
-plugin when there is just a `Patch` bump.
+plugin when there is just a `Tweak` bump.
 
 = Minor bump =
 `Minor` is incremented by one when a functional bug is fixed or when an update
 to jQuery or the jQuery Migrate plugin is made that is not a substantial jQuery
-change. When `Minor` is bumped, `Patch` will reset to `0`. Generally you should
+change. When `Minor` is bumped, `Tweak` will reset to `0`. Generally you should
 upgrade when `Minor` is bumped.
 
 = Major bump =
 
 `Major` will be incremented when there is an upgrade to jQuery that is
-significant in nature. Both `Minor` and `Patch` are reset to `0` when `Major`
+significant in nature. Both `Minor` and `Tweak` are reset to `0` when `Major`
 is bumped.
 
 Generally you should test an update to `Major` before updating on a production
@@ -378,6 +389,9 @@ projects outside of Pipfrosch Press are difficult for me to commit to.
 
 
 == Changelog ==
+
+= 1.1.0 (???) =
+* Added jQuery Migrate SRI hash for CDNJS and jsDelivr.
 
 = 1.0.1 (Thursday May 21, 2020) =
 * Updated `readme.txt` to include links to Public CDN services and their privacy policies.
