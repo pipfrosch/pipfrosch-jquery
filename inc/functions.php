@@ -203,6 +203,8 @@ function pipjq_add_sri_attributes( string $tag, string $handle, string $source )
       $sri = PIPJQMIGRATESRI;
       if ( substr_count( $source, 'cdnjs.cloudflare.com' ) !== 0 ) {
         $sri = PIPJQMIGRATESRI_CDNJS;
+      } else if( substr_count( $source, 'cdn.jsdelivr.net' ) !== 0 ) {
+        $sri = PIPJQMIGRATESRI_CDNJS;
       }
       $html = pipjq_fallback_for_cdn_failure( false );
       return '<script src="' . $source . '" integrity="' . $sri . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;

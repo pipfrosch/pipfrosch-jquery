@@ -221,13 +221,13 @@ https://code.jquery.com/
 
 = CloudFlare CDNJS =
 
-The minified jQuery Migrate plugin hosted at CloudFlare CDNJS has the following
-addition at the end of the file:
+The minified jQuery Migrate plugin hosted at CloudFlare CDNJS and jsDelivr CDN
+have the following addition at the end of the file:
 
     //# sourceMappingURL=jquery-migrate.min.map
 
-For this reason, an SRI specific to the CDN is used when CloudFlare CDNJS is
-the selected Public CDN.
+For this reason, an SRI specific to them is used when CloudFlare CDNJS or
+jsDelivr CDN is the selected Public CDN.
 
 = Security Reason for Hard Coding SRI Hashes =
 
