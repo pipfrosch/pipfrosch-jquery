@@ -4,7 +4,7 @@
  * Plugin URI:        https://github.com/pipfrosch/pipfrosch-jquery
  * Description:       Provides a modern jQuery environment for WordPress frontend
  * Tags:              jQuery
- * Version:           1.0.1
+ * Version:           1.0.2pre
  * Requires at least: 4.1.0
  * Tested up to:      5.4.1
  * Author:            Pipfrosch Press
