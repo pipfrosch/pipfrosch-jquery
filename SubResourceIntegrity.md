@@ -65,7 +65,37 @@ considerations that need to be addressed when using a Public (or any) CDN.
 Trojan Scripts
 --------------
 
+If an attacker is able to fool the DNS server a client uses to resolve the
+third party resource, the attacker can cause the client (web browser) to
+download the file from a server the attacker controls, allowing them to serve a
+malicious script to the client that the client then executes.
 
+Obviously only using TLS (SSL) for third party resources helps mitigate this as
+the attacker has to have a fraudulent certificate for the browser to accept the
+file, but that actually happens with some frequency.
+
+If an attacker can gain access to the CDN itself, the attacker could also put
+a trojan on the CDN. This does not happen too often but it has happened in the
+past.
+
+In both scenarios, the mitigation for this attack is __Subresoure Integrity__.
+
+
+SubResource Integrity
+---------------------
+
+This is a means by which your web page tells the client what the checksum of
+the remote resource should be.
+
+The `<script></script>` node that tells the client where to retrieve the script
+from will have an `integrity` attribute that includes a hash algorithm (such as
+`sha256` or `sha384`) followed by a `-` and then followed by a base64 encoded
+hash of the file.
+
+When the browser retrieves the remote file, it will hash the file using the
+specified algorithm and if the result does not match the specified hash, then
+the browser will reject the file as corrupt. This is very effective at
+protecting the client from execuring trojan content.
 
 
 
