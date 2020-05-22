@@ -6,33 +6,38 @@ Plugin for modern jQuery in WordPress.
 this branch is for cleaning up the code in preparation for WordPress.org
 submission.
 
-You can make a zip archive by executing the bash script `mkzip.sh` on a
-UNIX-ish system that has both `mktemp` and `zip` available.
+Installation
+------------
+Assuming this plugin is approved by WordPress, the easiest way to install it
+is through the WordPress plugin installer. Search for `Pipfrosch jQuery` and
+you will find it. It is not yet approved.
 
-Current Status
+### Manual Install
+
+To install from github you can make a zip archive by executing the bash script
+`mkzip.sh` on a UNIX-ish system that has both `mktemp` and `zip` available. If
+someone wants to make a Windows compatible batch file (or whatever they call
+it, I do not do Windows) I would appreciate it.
+
+The bash script:
+
+https://raw.githubusercontent.com/pipfrosch/pipfrosch-jquery/master/mkzip.sh
+
+Execute that script and it will make a versioned zip archive from the master
+branch on github which always has the most recent stable version of this
+plugin.
+
+The resulting zip archive can be unpacked in the `wp-content/plugins/`
+directory of your WordPress install. If you want a `.htaccess` file created
+upon plugin activation that (on Apache servers) tells clients to cache the
+jQuery files for a year, then make sure the web server has write permission
+to the directory resulting from unpacking the zip archive.
+
+Other than creation of that `.htaccess` file, the web server does not need to
+have write permission to the plugin directory for the plugin to function.
+
+
+Plugin Details
 --------------
 
-Pre-submission cleanup work is finished, merging into master.
-
-General
--------
-
-This github is for developing the plugin. When it is ready, right way to
-install will be through the WordPress plugin installer where only tested
-releases will exist.
-
-Stable releases will not include this `README.md` file, only a `readme.txt`.
-
-Originally my `piptheme` WordPress theme that is __not__ distributed through
-WordPress contained an updated jQuery. I decided that was the wrong way to go
-about it.
-
-jQuery sometimes has important security updates. Therefore it is important that
-updates to jQuery be made available when new releases are available and as such
-it would be better for jQuery to be updated in a separate plugin from the theme,
-preferably a plugin that can be updated through WordPress itself.
-
-This is an attempt to create such a plugin with needed bells and whistles to do
-that.
-
-See the `readme.txt` file.
+See the `readme.txt` file. This `README.md` is for the github project.
