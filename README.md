@@ -8,9 +8,8 @@ submission.
 
 Installation
 ------------
-Assuming this plugin is approved by WordPress, the easiest way to install it
-is through the WordPress plugin installer. Search for `Pipfrosch jQuery` and
-you will find it. It is not yet approved.
+The easiest way to install this plugin is through the WordPress plugin
+installer. Search for `Pipfrosch jQuery` and you should find it.
 
 ### Manual Install
 
