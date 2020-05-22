@@ -390,7 +390,7 @@ projects outside of Pipfrosch Press are difficult for me to commit to.
 
 == Changelog ==
 
-= 1.1.0 (???) =
+= 1.1.0 (Friday May 22, 2020) =
 * Added jQuery Migrate SRI hash for CDNJS and jsDelivr.
 
 = 1.0.1 (Thursday May 21, 2020) =
