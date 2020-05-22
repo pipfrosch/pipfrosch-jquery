@@ -209,7 +209,7 @@ option then the jQuery.com CDN will be used for the jQuery Migrate plugin.
 The Privacy Policy for that CDN is listed earlier in this `readme.txt` file.
 
 
-== Included Public Keys ==
+== Included Public Keys (SRI Hashes) ==
 
 This plugin includes the Subresource Identity public keys (hashes actually,
 they) for the minified versions of jQuery 3.5.1 and jQuery Migrate Plugin 3.3.0
@@ -219,7 +219,17 @@ The file `versions.php` hard-codes the public keys. The SRI values that are
 hard-coded in that file can be checked against the provided values at
 https://code.jquery.com/
 
-= Security Reason for Hard Coding =
+= CloudFlare CDNJS =
+
+The minified jQuery Migrate plugin hosted at CloudFlare CDNJS has the following
+addition at the end of the file:
+
+    //# sourceMappingURL=jquery-migrate.min.map
+
+For this reason, an SRI specific to the CDN is used when CloudFlare CDNJS is
+the selected Public CDN.
+
+= Security Reason for Hard Coding SRI Hashes =
 
 For security reasons, it is not safe for these SRI hash values to be stored in
 the database where an SQLi, XSS, or CSRF attack against an administrator could
@@ -285,25 +295,25 @@ from WordPress is audited by more eyes than my github.
 
 
 == Versioning Scheme ==
-Versions use an `Major.Minor.Patch` scheme` using integers for each. Code in
+Versions use an `Major.Minor.Tweak` scheme` using integers for each. Code in
 github may have a `pre` appended at the end to indicate is not a released
 version and should not be used on production systems.
 
-= Patch bump =
-`Patch` is incremented by one when a minor change is made, such as adding a new
+= Tweak bump =
+`Tweak` is incremented by one when a minor change is made, such as adding a new
 language to the translation support. Generally you can ignore upgrading this
-plugin when there is just a `Patch` bump.
+plugin when there is just a `Tweak` bump.
 
 = Minor bump =
 `Minor` is incremented by one when a functional bug is fixed or when an update
 to jQuery or the jQuery Migrate plugin is made that is not a substantial jQuery
-change. When `Minor` is bumped, `Patch` will reset to `0`. Generally you should
+change. When `Minor` is bumped, `Tweak` will reset to `0`. Generally you should
 upgrade when `Minor` is bumped.
 
 = Major bump =
 
 `Major` will be incremented when there is an upgrade to jQuery that is
-significant in nature. Both `Minor` and `Patch` are reset to `0` when `Major`
+significant in nature. Both `Minor` and `Tweak` are reset to `0` when `Major`
 is bumped.
 
 Generally you should test an update to `Major` before updating on a production
