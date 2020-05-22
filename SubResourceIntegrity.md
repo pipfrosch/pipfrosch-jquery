@@ -44,6 +44,16 @@ it cached already but then for the other eleven websites, the browser can just
 use the copy it has cached. This is a huge benefit, especially for JavaScript
 libraries.
 
+Resources served from a Public CDN should *always* have the attribute
+`crossorigin="anonymous"` set. This instructs browsers not to send any
+identifying information (such as cookies) to the Public CDN when retrieving the
+file. Some (most?) browsers behave this way by default now with JavaScript from
+a third party resource, but they will include the `HTTP_REFERER` header telling
+the browser what website caused the request for the file. In theory anyway,
+using the `crossorigin="anonymous"` attribute prevents even that from being
+sent. I have not tested that theory.
+
+
 ### Render Blocking Content
 
 Render blocking content is content the web browser must completely download
@@ -97,17 +107,59 @@ specified algorithm and if the result does not match the specified hash, then
 the browser will reject the file as corrupt. This is very effective at
 protecting the client from execuring trojan content.
 
+SRI is supported by current versions of virtually every browser commonly in
+use. See https://caniuse.com/#feat=subresource-integrity
+
+As of May 22, 2020 the only commonly used browsers that do not support SRI are
+Internet Explorer (a dead browser no longer being updated) and Opera Mini
+(which executes JavaScript on a proxy rather than in the browser).
+
+However SRI is not completely foolproof.
+
+### The Dynamic Content Hole
+
+Most wensite content, including WordPress content is dynamically generated. If
+the attacker can trick the web server platform into using a SRI tag that
+matches their trojan script then the browser will still execute it.
+
+The hash for an SRI tag should *never* be stored in a database the wen server
+has permission to modify. The best way to ensure the integrity of the hash is
+to hard code it in your server code, such as defining it as a constant in PHP.
+
+If an attacker is able to pull off an SQLi attack, they can potentially inject
+a hash that matches their trojan script into the database causing your
+dynamically generated page to assist in their attack.
+
+This why this plugin defines them as PHP constants in the `versions.php` file.
 
 
+Robust Fallback
+---------------
 
+What happens when the Public CDN goes down, is blocked by a political firewall,
+or the file served fails the SRI check?
 
+If the resource is a JavaScript library used by your website then without an
+adequate fallback, your website is broken for any user who does not already
+have the resource cached.
 
+With JavaScript libraries there is a solution. After the `<script></script>`
+node that tells the browser to fetch the library, put in a small piece of
+inline JavaScript that tests to see if the library is loaded. If it is not
+loaded then instruct the client to download the library from your webserver.
 
+### Timeout Problem
 
+The fallback will not solve the potential problem of a CDN having technical
+issues that result in a timeout on the request slowing down the rendering of
+your website, but even in that case the client will at least load the library
+and the site will function.
 
+However the timeout problem will persist on every page of yours the user visits
+until the CDN fixes its technical problem.
 
+There has been talk of adding a `timeout` attribute to help mitigate this issue
+but at this time it does not appear exist in any of the standards, so as far as
+I know, no browser implements it.
 
-
-
-
-
+Fortunately this is a rare issue.
