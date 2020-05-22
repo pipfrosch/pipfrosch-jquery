@@ -249,17 +249,6 @@ The Google CDN does not host any version of the jQuery Migrate plugin. If you
 select that option and have the Migrate plugin enabled, that plugin will be
 served from the jQuery.com CDN.
 
-The jsDelivr CDN and CloudFlare CDNJS have the current core jQuery library and
-they pass SRI however the Migrate plugin they host, even though the version
-number appears to be identical, has a different checksum. It is my *suspicion*
-they are minifying the Migrate plugin themselves with a slightly different
-algorithm rather than using the minified version of that plugin as provided by
-jQuery.com. I will attempt to communicate with them and see if I can get them
-to start using the minified version as supplied by jQuery.com but at this time
-if you select either of those options and have the Migrate plugin enabled, the
-version they host will fail the SRI test causing the client browser to fetch it
-from your server instead.
-
 
 == Plugin / Theme Compatibility ==
 
