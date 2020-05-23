@@ -271,6 +271,9 @@ You can also get them directly from the defined constants `PIPJQ_PLUGIN_VERSION`
 
 == Changelog ==
 
+= 1.1.1 ( ??? )
+* define versions as options, run upgrade check.
+
 = 1.1.0 (Friday May 22, 2020) =
 * Added jQuery Migrate SRI hash for CDNJS and jsDelivr.
 
