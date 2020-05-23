@@ -256,6 +256,19 @@ It does not hurt to ask but probably not, Pipfrosch Press is brand new and right
 2. Generated WordPress HTML source code showing the failed CDN fallback code.
 
 
+== Developers ===
+
+If you have a plugin or theme that wants to know about versions, the following options are defined if this plugin is active:
+
+* `pipjq_plugin_version` defines the plugin version.
+* `pipjq_jquery_version` defines the jQuery version.
+* `pipjq_jquery_migrate_version` defines the jQuery Migrate plugin version
+
+All three those of those options are defined as strings.
+
+You can also get them directly from the defined constants `PIPJQ_PLUGIN_VERSION`, `PIPJQV`, and `PIPJQMIGRATE` respectively but I do not guarantee that I will continue to specify them with those constant into the long-term future. For example, if I switch to a more OOP approach they may be defined within a class rather than as constants. The options however will always be defined.
+
+
 == Changelog ==
 
 = 1.1.0 (Friday May 22, 2020) =
