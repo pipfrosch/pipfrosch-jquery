@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Pipfrosch jQuery
- * Plugin URI:        https://github.com/pipfrosch/pipfrosch-jquery
+ * Plugin URI:        https://wordpress.org/plugins/pipfrosch-jquery/
  * Description:       Provides a modern jQuery environment for WordPress frontend
  * Tags:              jQuery
  * Version:           1.1.1pre
