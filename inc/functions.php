@@ -140,6 +140,41 @@ function pipjq_initialize_options() {
   $foo = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
   $foo = pipjq_get_option_as_boolean( 'pipjq_sri' );
   $foo = pipjq_get_cdnhost_option();
+  // not directly used but lets other plugins know
+  $test = get_option( 'pipjq_jquery_version' );
+  if ( ( is_bool ($test) ) && ( ! $test ) ) {
+      add_option( 'pipjq_jquery_version', PIPJQV );
+  } else {
+      update_option( 'pipjq_jquery_version', PIPJQV );
+  }
+  $test = get_option( 'pipjq_jquery_migrate_version' );
+  if ( ( is_bool ($test) ) && ( ! $test ) ) {
+      add_option( 'pipjq_jquery_migrate_version', PIPJQMIGRATE );
+  } else {
+      update_option( 'pipjq_jquery_migrate_version', PIPJQMIGRATE );
+  }
+  $test = get_option( 'pipjq_plugin_version' );
+  if ( ( is_bool ($test) ) && ( ! $test ) ) {
+      add_option( 'pipjq_plugin_version', PIPJQ_PLUGIN_VERSION );
+  } else {
+      update_option( 'pipjq_plugin_version', PIPJQ_PLUGIN_VERSION );
+  }
+}
+
+/**
+ * Upgrade check
+ *
+ * Callback to check to see if the installed version of plugin is an upgrade.
+ *
+ * @return void
+ */
+function pipjq_upgrade_check() {
+  $test = get_option( 'pipjq_plugin_version' );
+  if ( ! is_string( $test ) ) {
+      pipjq_initialize_options();
+  } elseif ( $test !== PIPJQ_PLUGIN_VERSION ) {
+      pipjq_initialize_options();
+  }
 }
 
 /**

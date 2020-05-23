@@ -37,6 +37,7 @@ $pipjq_url_array = parse_url( plugin_dir_url( __FILE__ ) );
 
 define( "PIPJQ_PLUGIN_DIR", plugin_dir_path( __FILE__ ) );
 define( "PIPJQ_PLUGIN_WEBPATH", $pipjq_url_array['path'] );
+define( "PIPJQ_PLUGIN_VERSION", '1.1.1pre' );
 
 /*
  * When developing, the Settings API gave me trouble. By defining the
@@ -52,6 +53,7 @@ require_once( PIPJQ_PLUGIN_DIR . 'inc/functions.php' );
 
 register_activation_hook( __FILE__, 'pipjq_activation' );
 
+add_action( 'plugins_loaded', 'pipjq_upgrade_check' );
 /* only do settings stuff if on admin page, do not update jQuery if on admin pages */
 if ( is_admin() ) {
   add_action( 'admin_init', 'pipjq_register_settings' );
