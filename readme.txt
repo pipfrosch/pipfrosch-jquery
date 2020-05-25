@@ -256,7 +256,7 @@ It does not hurt to ask but probably not, Pipfrosch Press is brand new and right
 2. Generated WordPress HTML source code showing the failed CDN fallback code.
 
 
-== Developers ===
+== Developers ==
 
 If you have a plugin or theme that wants to know about versions, the following options are defined if this plugin is active:
 
