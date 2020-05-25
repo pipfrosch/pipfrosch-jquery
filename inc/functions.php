@@ -419,6 +419,7 @@ function pipjq_activation(): void
  */
 function pipjq_mod_expires(): void
 {
+  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
     return;
