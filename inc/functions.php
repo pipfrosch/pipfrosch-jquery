@@ -107,13 +107,16 @@ function pipjq_get_cdnhost_option(): string
  *  evaluates as the integer 1 when recast to integer is supplied, this function
  *  will output the string "1". Any other value and it outputs the string "0".
  *
- * @param string The string passed to this callback from the WordPress options form
- *               processing.
+ * @param string|null The string passed to this callback from the WordPress options form
+ *                    processing.
  *
  * @return string
  */
-function pipjq_sanitize_checkbox( string $input ): string
+function pipjq_sanitize_checkbox( $input ): string
 {
+  if ( ! is_string( $input ) ) {
+    $input = '';
+  }
   $input = sanitize_text_field( $input );
   if ( is_numeric( $input ) ) {
     $num = intval( $input );
