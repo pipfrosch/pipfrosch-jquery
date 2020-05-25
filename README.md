@@ -1,6 +1,8 @@
 Pipfrosch jQuery
 ================
 
+__THERE ARE CURRENTLY UNTESTED CODE CHANGES FROM STABLE RELEASE__
+
 Plugin for modern jQuery in WordPress.
 
 this branch is for cleaning up the code in preparation for WordPress.org

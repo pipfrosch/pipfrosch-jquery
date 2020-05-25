@@ -16,7 +16,8 @@ if ( ! defined( 'PIPJQ_PLUGIN_WEBPATH' ) ) { exit; }
  *
  * @return bool
  */
-function pipjq_get_option_as_boolean( string $option, bool $default = true ) {
+function pipjq_get_option_as_boolean( string $option, bool $default = true ): bool
+{
   $test = get_option( $option );
   if ( is_bool( $test ) ) {
     if ( $test ) {
@@ -38,12 +39,10 @@ function pipjq_get_option_as_boolean( string $option, bool $default = true ) {
   return true;
 }
 
-// the sanitizes cdnhost string
-
 /**
  * Sanitize CDN host string
  *
- * This WordPress uses a fixed set public Content Distribution Networks.
+ * This WordPress plugin uses a fixed set public Content Distribution Networks.
  *  This function eats an input and outputs a sanitized version that matches
  *  the case sensitivity expected, returning the default CDN if it can not
  *  identify which CDN is intended in the input.
@@ -52,7 +51,8 @@ function pipjq_get_option_as_boolean( string $option, bool $default = true ) {
  *
  * @return string
  */
-function pipjq_sanitize_cdnhost( string $input ) {
+function pipjq_sanitize_cdnhost( string $input ): string
+{
   $input = strtolower( sanitize_text_field( $input ) );
   switch( $input ) {
     case 'microsoft cdn':
@@ -84,10 +84,11 @@ function pipjq_sanitize_cdnhost( string $input ) {
  *
  * @return string
  */
-function pipjq_get_cdnhost_option() {
+function pipjq_get_cdnhost_option(): string
+{
   $default = pipjq_sanitize_cdnhost( 'use default' );
   $test = get_option( 'pipjq_cdnhost' );
-  if (! is_string ( $test ) ) {
+  if ( ! is_string ( $test ) ) {
     add_option( 'pipjq_cdnhost', $default );
     return $default;
   }
@@ -98,22 +99,24 @@ function pipjq_get_cdnhost_option() {
   return $clean;
 }
 
-// the callback to sanitize checkbox string
-
 /**
  * Sanitize checkbox input.
  *
  * This plugin likes the faux boolean options set to be a string of "0" for false
  *  and "1" for true. The form sets a value a "1" when checked. If a string that
- *  evaluates as the integer 1 when recast to integer is supplies, this function
+ *  evaluates as the integer 1 when recast to integer is supplied, this function
  *  will output the string "1". Any other value and it outputs the string "0".
  *
- * @param string The string passed to this callback from the WordPress options form
- *               processing.
+ * @param string|null The string passed to this callback from the WordPress options form
+ *                    processing.
  *
  * @return string
  */
-function pipjq_sanitize_checkbox( string $input ) {
+function pipjq_sanitize_checkbox( $input ): string
+{
+  if ( ! is_string( $input ) ) {
+    $input = '';
+  }
   $input = sanitize_text_field( $input );
   if ( is_numeric( $input ) ) {
     $num = intval( $input );
@@ -124,8 +127,6 @@ function pipjq_sanitize_checkbox( string $input ) {
   return "0";
 }
 
-/* initiate options */
-
 /**
  * Initialize options
  *
@@ -135,11 +136,50 @@ function pipjq_sanitize_checkbox( string $input ) {
  *
  * @return void
  */
-function pipjq_initialize_options() {
+function pipjq_initialize_options(): void
+{
   $foo = pipjq_get_option_as_boolean( 'pipjq_migrate' );
   $foo = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
   $foo = pipjq_get_option_as_boolean( 'pipjq_sri' );
   $foo = pipjq_get_cdnhost_option();
+  $test = get_option( 'pipjq_plugin_version' );
+  if ( ( is_bool ($test) ) && ( ! $test ) ) {
+      add_option( 'pipjq_plugin_version', PIPJQ_PLUGIN_VERSION );
+  } else {
+      update_option( 'pipjq_plugin_version', PIPJQ_PLUGIN_VERSION );
+  }
+  // not directly used but lets other plugins know
+  $test = get_option( 'pipjq_jquery_version' );
+  if ( ( is_bool ($test) ) && ( ! $test ) ) {
+      add_option( 'pipjq_jquery_version', PIPJQV );
+  } else {
+      update_option( 'pipjq_jquery_version', PIPJQV );
+  }
+  $test = get_option( 'pipjq_jquery_migrate_version' );
+  if ( ( is_bool ($test) ) && ( ! $test ) ) {
+      add_option( 'pipjq_jquery_migrate_version', PIPJQMIGRATE );
+  } else {
+      update_option( 'pipjq_jquery_migrate_version', PIPJQMIGRATE );
+  }
+}
+
+/**
+ * Upgrade check
+ *
+ * Callback to check to see if the installed version of plugin is an upgrade.
+ *
+ * @return void
+ */
+function pipjq_upgrade_check(): void
+{
+  $test = get_option( 'pipjq_plugin_version' );
+  if ( ! is_string( $test ) ) {
+      pipjq_initialize_options();
+      pipjq_mod_expires();
+  } elseif ( $test !== PIPJQ_PLUGIN_VERSION ) {
+      pipjq_initialize_options();
+      pipjq_mod_expires();
+  }
 }
 
 /**
@@ -157,7 +197,8 @@ function pipjq_initialize_options() {
  *
  * @return string
  */
-function pipjq_fallback_for_cdn_failure( bool $core = true ) {
+function pipjq_fallback_for_cdn_failure( bool $core = true ): string
+{
   $html = '<script>' . PHP_EOL . '  // Fallback to load locally if CDN fails' . PHP_EOL;
   if ($core) {
     $html .= '  (window.jQuery || document.write(\'<script src="' . PIPJQ_PLUGIN_WEBPATH . 'jquery-' . PIPJQV . '.min.js"><\/script>\'));' . PHP_EOL;
@@ -193,13 +234,14 @@ function pipjq_fallback_for_cdn_failure( bool $core = true ) {
  *
  * @return string
  */
-function pipjq_add_sri_attributes( string $tag, string $handle, string $source ) {
+function pipjq_add_sri_attributes( string $tag, string $handle, string $source ): string
+{
   switch( $handle ) {
-    case 'jquery-core':
+    case 'pipfrosch-jquery-core':
       $html = pipjq_fallback_for_cdn_failure();
       return '<script src="' . $source . '" integrity="' . PIPJQVSRI . '" crossorigin="anonymous"></script>' . PHP_EOL . $html;
       break;
-    case 'jquery-migrate':
+    case 'pipfrosch-jquery-migrate':
       $sri = PIPJQMIGRATESRI;
       if ( substr_count( $source, 'cdnjs.cloudflare.com' ) !== 0 ) {
         $sri = PIPJQMIGRATESRI_CDNJS;
@@ -229,12 +271,13 @@ function pipjq_add_sri_attributes( string $tag, string $handle, string $source )
  *
  * @return string
  */
-function pipjq_add_crossorigin_attribute( string $tag, string $handle, string $source ) {
+function pipjq_add_crossorigin_attribute( string $tag, string $handle, string $source ): string
+{
   switch( $handle ) {
-    case 'jquery-core':
+    case 'pipfrosch-jquery-core':
       $html = pipjq_fallback_for_cdn_failure();
       break;
-    case 'jquery-migrate':
+    case 'pipfrosch-jquery-migrate':
       $html = pipjq_fallback_for_cdn_failure( false );
       break;
     default:
@@ -255,7 +298,8 @@ function pipjq_add_crossorigin_attribute( string $tag, string $handle, string $s
  *
  * @return stdClass
  */
-function pipjq_script_src( string $cdnhost="localhost" ) {
+function pipjq_script_src( string $cdnhost="localhost" )
+{
   $rs = new stdClass();
   switch( $cdnhost ) {
     case 'jQuery.com CDN':
@@ -303,7 +347,8 @@ function pipjq_script_src( string $cdnhost="localhost" ) {
  *
  * @return void
  */
-function pipjq_update_wpcore_jquery() {
+function pipjq_update_wpcore_jquery(): void
+{
   //get the settings and validate
   $migrate = pipjq_get_option_as_boolean( 'pipjq_migrate' );
   $cdn     = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
@@ -313,12 +358,20 @@ function pipjq_update_wpcore_jquery() {
     $cdnhost = pipjq_get_cdnhost_option();
   }
   $srcuri = pipjq_script_src( $cdnhost );
-  //act on options
-  wp_deregister_script( 'jquery-core' );
+  
+  //de-register the WordPress jQuery
+  wp_deregister_script( 'jquery' );
   wp_deregister_script( 'jquery-migrate' );
-  wp_register_script( 'jquery-core', $srcuri->jquery, array(), null );
+  wp_deregister_script( 'jquery-core' );
+    
+  wp_register_script( 'pipfrosch-jquery-core', $srcuri->jquery, array(), null );
+  wp_register_script( 'pipfrosch-jquery-migrate', $srcuri->migrate, array( 'pipfrosch-jquery-core' ), null );
+  wp_register_script( 'jquery-migrate', false, array('pipfrosch-jquery-migrate'), null );
+  wp_register_script( 'jquery', false, array( 'pipfrosch-jquery-migrate' ), null );
   if ( $migrate ) {
-    wp_register_script( 'jquery-migrate', $srcuri->migrate, array( 'jquery-core' ), null );
+    wp_register_script( 'jquery-core', false, array( 'pipfrosch-jquery-migrate' ), null );
+  } else {
+    wp_register_script( 'jquery-core', false, array( 'pipfrosch-jquery-core' ), null );
   }
   if ( $srcuri->cdn ) {
     if ( $sri ) {
@@ -330,20 +383,12 @@ function pipjq_update_wpcore_jquery() {
 }
 
 /**
- * Plugin activation script.
- *
- * When activating the plugin this function is run. It will initialize the options
- *  this plugin uses to their default values (unless already set) and if the server
- *  has write permission to the directory for this plugin *and* a `.htaccess` file
- *  does not already exist in it, it will create a `.htaccess` file that is
- *  compatible with the Apache 2 `mod_expires.c` module so that jQuery and the
- *  Migrate plugin are served with a header telling the client it can cache those
- *  files for up to a year.
+ * Creates a .htaccess file for mod_expires
  *
  * @return void
  */
-function pipjq_activation() {
-  pipjq_initialize_options();
+function pipjq_mod_expires(): void
+{
   $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
   if ( file_exists( $htaccess ) ) {
     // do not overwrite if already exists
@@ -358,7 +403,6 @@ function pipjq_activation() {
     $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
     file_put_contents( $htaccess, $contents );
   }
-  return;
 }
 
 /* functions specific to the WordPress Settings API */
@@ -373,7 +417,8 @@ function pipjq_activation() {
  *
  * @return void
  */
-function pipjq_settings_form_text_helpers() {
+function pipjq_settings_form_text_helpers(): void
+{
   $string  = PHP_EOL . '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   // Translators: Migrate is in reference to jQuery Migrate plugin
   $string .= ' <em>' . __( 'Use Migrate Plugin', 'pipfrosch-jquery' ) . '</em> ';
@@ -394,7 +439,8 @@ function pipjq_settings_form_text_helpers() {
  *
  * @return void
  */
-function pipjq_migrate_input_tag() {
+function pipjq_migrate_input_tag(): void
+{
   $migrate = pipjq_get_option_as_boolean( 'pipjq_migrate' );
   $checked = '';
   if ( $migrate ) {
@@ -408,7 +454,8 @@ function pipjq_migrate_input_tag() {
  *
  * @return void
  */
-function pipjq_cdn_input_tag() {
+function pipjq_cdn_input_tag(): void
+{
   $cdn = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
   $checked = '';
   if ( $cdn ) {
@@ -422,7 +469,8 @@ function pipjq_cdn_input_tag() {
  *
  * @return void
  */
-function pipjq_sri_input_tag() {
+function pipjq_sri_input_tag(): void
+{
   $sri = pipjq_get_option_as_boolean( 'pipjq_sri' );
   $checked = '';
   if ( $sri ) {
@@ -436,7 +484,8 @@ function pipjq_sri_input_tag() {
  *
  * @return void
  */
-function pipjq_cdnhost_select_tag() {
+function pipjq_cdnhost_select_tag(): void
+{
   $cdnhost = pipjq_get_cdnhost_option();
   // translators: This array is of proper names and they do not get translated
   $values = array( 'jQuery.com CDN',
@@ -468,7 +517,8 @@ function pipjq_cdnhost_select_tag() {
  *
  * @return void
  */
-function pipjq_options_page_form() {
+function pipjq_options_page_form(): void
+{
   $cdn = pipjq_get_option_as_boolean( 'pipjq_cdn', false );
   $parenthesis = '(' . __( 'disabled', 'pipfrosch-jquery' ) . ')';
   if ( $cdn ) {
@@ -505,7 +555,8 @@ function pipjq_options_page_form() {
  *
  * @return void
  */
-function pipjq_register_settings() {
+function pipjq_register_settings(): void
+{
   register_setting( PIPJQ_OPTIONS_GROUP,
                     'pipjq_migrate',
                     array( 'sanitize_callback' => 'pipjq_sanitize_checkbox' ) );
@@ -564,7 +615,8 @@ function pipjq_register_settings() {
  *
  * @return void
  */
-function pipjq_register_options_page() {
+function pipjq_register_options_page(): void
+{
   add_options_page( 'jQuery ' . PIPJQV . ' ' . __( 'Options', 'pipfrosch-jquery' ),
                     'jQuery ' . __( 'Options', 'pipfrosch-jquery' ),
                     'manage_options',
