@@ -52,7 +52,7 @@ require_once( PIPJQ_PLUGIN_DIR . 'versions.php' );
 require_once( PIPJQ_PLUGIN_DIR . 'inc/functions.php' );
 
 //register_activation_hook( __FILE__, 'pipjq_activation' );
-add_action( 'plugins_loaded', 'pipjq_upgrade_check' );
+pipjq_upgrade_check();
 
 /* only do settings stuff if on admin page, do not update jQuery if on admin pages */
 if ( is_admin() ) {
