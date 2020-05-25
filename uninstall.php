@@ -9,4 +9,4 @@ delete_option( 'pipjq_cdn' );
 delete_option( 'pipjq_sri' );
 delete_option( 'pipjq_cdnhost' );
 delete_option( 'pipjq_jquery_version' );
-delete_option( 'pipjq_jquery_migrate_version' )
+delete_option( 'pipjq_jquery_migrate_version' );
