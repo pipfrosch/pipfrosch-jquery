@@ -4,7 +4,7 @@
  * Plugin URI:        https://wordpress.org/plugins/pipfrosch-jquery/
  * Description:       Provides a modern jQuery environment for WordPress frontend
  * Tags:              jQuery
- * Version:           1.1.1pre
+ * Version:           1.2.0pre
  * Requires at least: 4.1.0
  * Tested up to:      5.4.1
  * Author:            Pipfrosch Press
@@ -37,7 +37,7 @@ $pipjq_url_array = parse_url( plugin_dir_url( __FILE__ ) );
 
 define( "PIPJQ_PLUGIN_DIR", plugin_dir_path( __FILE__ ) );
 define( "PIPJQ_PLUGIN_WEBPATH", $pipjq_url_array['path'] );
-define( "PIPJQ_PLUGIN_VERSION", '1.1.1pre' );
+define( "PIPJQ_PLUGIN_VERSION", '1.2.0' );
 
 /*
  * When developing, the Settings API gave me trouble. By defining the
@@ -51,9 +51,9 @@ define( "PIPJQ_SETTINGS_PAGE_SLUG_NAME", 'pipjq_options');
 require_once( PIPJQ_PLUGIN_DIR . 'versions.php' );
 require_once( PIPJQ_PLUGIN_DIR . 'inc/functions.php' );
 
-register_activation_hook( __FILE__, 'pipjq_activation' );
-
+//register_activation_hook( __FILE__, 'pipjq_activation' );
 add_action( 'plugins_loaded', 'pipjq_upgrade_check' );
+
 /* only do settings stuff if on admin page, do not update jQuery if on admin pages */
 if ( is_admin() ) {
   add_action( 'admin_init', 'pipjq_register_settings' );

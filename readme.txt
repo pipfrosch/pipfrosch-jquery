@@ -33,17 +33,17 @@ There are four configurable options you can customize.
 
 Enabled by default.
 
-You may disable compatibility with scripts that require older versions of jQuery. This is not recommended. Plugins and themes and quite possibly WP Core scripts that use jQuery may require features that are no longer supported in the current version of jQuery without the Migrate plugin.
-
-You can disable compatibility completely if you so desire by disabling the jQuery Migrate plugin.
+You may disable compatibility with scripts that require older versions of jQuery. This is not recommended.
 
 The jQuery Migrate plugin provides compatibility with jQuery 1.9 through 3.0. It is enabled by default and provides compatibility with the version of jQuery that currently (WP 5.4.1) ships in WordPress, which is version jQuery 1.12.4.
 
-If some jQuery scripts break even with the default compatibility mode, they are likely written for jQuery prior to 1.9. The only option is to not use this plugin until you have upgraded that very old code.
+Scripts written to use the version of jQuery that ships with WordPress may be registered with a dependency of `jquery-core` but use functions that are no longer supported in jQuery 3.5.1. When ‘Use Migrate Plugin’ is enabled, scripts that are registered with a dependency of `jquery-core` will trigger enqueuing of the Migrate plugin so that those scripts written for the older jQuery will still work. When ‘Use Migrate Plugin’ is disabled, then enqueuing of the Migrate plugin will only happen if scripts explicitly specify `jquery-migrate` or `jquery` as a dependency.
+
+If some jQuery scripts break even with ‘Use Migrate Plugin’ enabled, they are likely written for jQuery prior to version 1.9. The only option in that case is to not use this plugin until you have upgraded that very old code.
 
 It is highly recommended you update that code as soon as possible, whether or not you plan to use this plugin.
 
-Please note that WordPress has loaded jQuery by default for years, this results in many plugins and themes using jQuery out of convenience when they really did not need to.
+Please note that WordPress has provided jQuery for years, this results in many plugins and themes using jQuery out of convenience when they really did not need to.
 
 Rumor is that a future release of WordPress may only use native JavaScript for everything in WP Core. If hiring a JavaScript developer to update old jQuery code, make sure the JavaScript developer is wise enough to know when porting the code to native JavaScript makes more sense than continuing to use jQuery and when using jQuery really is the best approach. In other words, do not hire someone like me, I pretty much only use jQuery but that is admittedly not always the best approach, just the convenient approach.
 
@@ -271,8 +271,11 @@ You can also get them directly from the defined constants `PIPJQ_PLUGIN_VERSION`
 
 == Changelog ==
 
-= 1.1.1 ( ??? )
+= 1.2.0 ( Tuesday May 25, 2020 ) =
 * define versions as options, run upgrade check.
+* type hinting on function output
+* fixed bug with dependencies
+* No longer use activation hook (attempting to make more mu friendly)
 
 = 1.1.0 (Friday May 22, 2020) =
 * Added jQuery Migrate SRI hash for CDNJS and jsDelivr.
@@ -288,4 +291,4 @@ You can also get them directly from the defined constants `PIPJQ_PLUGIN_VERSION`
 
 == Upgrade Notice ==
 
-The version of jQuery in WordPress Core is very archaic and limits what you can do as a result. Upgrading the jQuery available for your front-end content will open up options.
+This release fixes a bug with how script dependencies are handled. See https://wordpress.org/support/topic/bug-with-script-dependencies/
