@@ -383,39 +383,6 @@ function pipjq_update_wpcore_jquery(): void
 }
 
 /**
- * Plugin activation script.
- *
- * When activating the plugin this function is run. It will initialize the options
- *  this plugin uses to their default values (unless already set) and if the server
- *  has write permission to the directory for this plugin *and* a `.htaccess` file
- *  does not already exist in it, it will create a `.htaccess` file that is
- *  compatible with the Apache 2 `mod_expires.c` module so that jQuery and the
- *  Migrate plugin are served with a header telling the client it can cache those
- *  files for up to a year.
- *
- * @return void
- */
-function pipjq_activation(): void
-{
-  pipjq_initialize_options();
-  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
-  if ( file_exists( $htaccess ) ) {
-    // do not overwrite if already exists
-    return;
-  }
-  if ( is_writeable( dirname( $htaccess ) ) ) {
-    $contents  = '<IfModule mod_expires.c>' . PHP_EOL;
-    $contents .= '  ExpiresActive On' . PHP_EOL;
-    $contents .= '  <FilesMatch "\.min\.js">' . PHP_EOL;
-    $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
-    $contents .= '  </FilesMatch>' . PHP_EOL;
-    $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
-    file_put_contents( $htaccess, $contents );
-  }
-  return;
-}
-
-/**
  * Creates a .htaccess file for mod_expires
  *
  * @return void

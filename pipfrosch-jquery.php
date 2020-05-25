@@ -4,7 +4,7 @@
  * Plugin URI:        https://wordpress.org/plugins/pipfrosch-jquery/
  * Description:       Provides a modern jQuery environment for WordPress frontend
  * Tags:              jQuery
- * Version:           1.2.0pre
+ * Version:           1.2.0
  * Requires at least: 4.1.0
  * Tested up to:      5.4.1
  * Author:            Pipfrosch Press
@@ -51,7 +51,7 @@ define( "PIPJQ_SETTINGS_PAGE_SLUG_NAME", 'pipjq_options');
 require_once( PIPJQ_PLUGIN_DIR . 'versions.php' );
 require_once( PIPJQ_PLUGIN_DIR . 'inc/functions.php' );
 
-//register_activation_hook( __FILE__, 'pipjq_activation' );
+//activation and upgrade
 pipjq_upgrade_check();
 
 /* only do settings stuff if on admin page, do not update jQuery if on admin pages */
