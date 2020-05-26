@@ -422,13 +422,11 @@ function pipjq_settings_form_text_helpers(): void
   $string  = PHP_EOL . '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   // Translators: Migrate is in reference to jQuery Migrate plugin
   $string .= ' <em>' . __( 'Use Migrate Plugin', 'pipfrosch-jquery' ) . '</em> ';
-  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
-  echo ( $string );
-  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.<br />' . PHP_EOL;
+  $string .= __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   $string .= ' <em>' . __( 'Use Content Distribution Network', 'pipfrosch-jquery' ) . '</em> ';
-  $string .= __( 'option', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
-  echo ( $string );
-  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= __( 'option', 'pipfrosch-jquery' ) . '.<br />' . PHP_EOL;
+  $string .= __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   $string .= ' <em>' . __( 'Use Subresource Integrity', 'pipfrosch-jquery' ) . '</em> ';
   $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
   echo ( $string );
@@ -529,10 +527,13 @@ function pipjq_options_page_form(): void
   $r = array( '<abbr>CDN</abbr>' , '<abbr>CDNJS</abbr>' );
   $cdnhost = preg_replace($s, $r, $cdnhost);
   $html  = '    <h2>Pipfrosch jQuery ' . __('Plugin Management', 'pipfrosch-jquery') . '</h2>' . PHP_EOL;
-  $html .= '    <p>jQuery ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQV . '</p>' . PHP_EOL;
+  $html .= '    <p>jQuery ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQV . '<br />' . PHP_EOL;
   // Translators: Migrate is in reference to jQuery Migrate plugin
-  $html .= '    <p>jQuery ' . __( 'Migrate Plugin Version', 'pipfrosch-jquery') . ': ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
-  $html .= '    <p>' . __( 'Current', '') . ' <abbr title="' . esc_attr__( 'Content Distribution Network' , 'pipfrosch-jquery');
+  $html .= 'jQuery ' . __( 'Migrate Plugin Version', 'pipfrosch-jquery') . ': ' . PIPJQMIGRATE . '<br />' . PHP_EOL;
+  if ( defined( 'PIPJQUIV' ) ) {
+    $html .= 'jQuery UI ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQUIV . '<br />' . PHP_EOL;
+  }
+  $html .= __( 'Current', '') . ' <abbr title="' . esc_attr__( 'Content Distribution Network' , 'pipfrosch-jquery');
   $html .= '">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
   $html .= '    <form method="post" action="options.php">' . PHP_EOL;
   echo $html;
@@ -571,7 +572,7 @@ function pipjq_register_settings(): void
                     array( 'sanitize_callback' => 'pipjq_sanitize_cdnhost' ) );
 
   add_settings_section( PIPJQ_SECTION_SLUG_NAME,
-                        'Plugin Options',
+                        'jQuery Core Options',
                         'pipjq_settings_form_text_helpers',
                         PIPJQ_SETTINGS_PAGE_SLUG_NAME );
 
