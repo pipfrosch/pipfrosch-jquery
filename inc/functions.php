@@ -100,34 +100,6 @@ function pipjq_get_cdnhost_option(): string
 }
 
 /**
- * Sanitize checkbox input.
- *
- * This plugin likes the faux boolean options set to be a string of "0" for false
- *  and "1" for true. The form sets a value a "1" when checked. If a string that
- *  evaluates as the integer 1 when recast to integer is supplied, this function
- *  will output the string "1". Any other value and it outputs the string "0".
- *
- * @param string|null The string passed to this callback from the WordPress options form
- *                    processing.
- *
- * @return string
- */
-function pipjq_sanitize_checkbox( $input ): string
-{
-  if ( ! is_string( $input ) ) {
-    $input = '';
-  }
-  $input = sanitize_text_field( $input );
-  if ( is_numeric( $input ) ) {
-    $num = intval( $input );
-    if ( $num === 1 ) {
-      return "1";
-    }
-  }
-  return "0";
-}
-
-/**
  * Initialize options
  *
  * This function makes sure the options are defined in the WordPress options
@@ -160,6 +132,29 @@ function pipjq_initialize_options(): void
       add_option( 'pipjq_jquery_migrate_version', PIPJQMIGRATE );
   } else {
       update_option( 'pipjq_jquery_migrate_version', PIPJQMIGRATE );
+  }
+}
+
+/**
+ * Creates a .htaccess file for mod_expires
+ *
+ * @return void
+ */
+function pipjq_mod_expires(): void
+{
+  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
+  if ( file_exists( $htaccess ) ) {
+    // do not overwrite if already exists
+    return;
+  }
+  if ( is_writeable( dirname( $htaccess ) ) ) {
+    $contents  = '<IfModule mod_expires.c>' . PHP_EOL;
+    $contents .= '  ExpiresActive On' . PHP_EOL;
+    $contents .= '  <FilesMatch "\.min\.js">' . PHP_EOL;
+    $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
+    $contents .= '  </FilesMatch>' . PHP_EOL;
+    $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
+    file_put_contents( $htaccess, $contents );
   }
 }
 
@@ -382,32 +377,38 @@ function pipjq_update_wpcore_jquery(): void
   }
 }
 
+/* For Settings API */
+
 /**
- * Creates a .htaccess file for mod_expires
+ * Sanitize checkbox input.
  *
- * @return void
+ * This plugin likes the faux boolean options set to be a string of "0" for false
+ *  and "1" for true. The form sets a value a "1" when checked. If a string that
+ *  evaluates as the integer 1 when recast to integer is supplied, this function
+ *  will output the string "1". Any other value and it outputs the string "0".
+ *
+ * @param mixed The string passed to this callback from the WordPress options form
+ *              processing.
+ *
+ * @return string
  */
-function pipjq_mod_expires(): void
+function pipjq_sanitize_checkbox( $input ): string
 {
-  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
-  if ( file_exists( $htaccess ) ) {
-    // do not overwrite if already exists
-    return;
+  if ( is_bool( $input ) && $input ) {
+    return "1";
   }
-  if ( is_writeable( dirname( $htaccess ) ) ) {
-    $contents  = '<IfModule mod_expires.c>' . PHP_EOL;
-    $contents .= '  ExpiresActive On' . PHP_EOL;
-    $contents .= '  <FilesMatch "\.min\.js">' . PHP_EOL;
-    $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
-    $contents .= '  </FilesMatch>' . PHP_EOL;
-    $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
-    file_put_contents( $htaccess, $contents );
+  if ( ! is_string( $input ) ) {
+    return "0";
   }
+  $input = sanitize_text_field( $input );
+  if ( is_numeric( $input ) ) {
+    $num = intval( $input );
+    if ( $num === 1 ) {
+      return "1";
+    }
+  }
+  return "0";
 }
-
-/* functions specific to the WordPress Settings API */
-
-// the callback for add_settings_section
 
 /**
  * Settings form helpers

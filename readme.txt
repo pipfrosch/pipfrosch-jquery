@@ -22,7 +22,7 @@ When a CDN is used, a small amount of code is added to your pages to provide a f
 
 The updated jQuery will not replace the core jQuery for administration pages. This is to avoid potential breakage of administrative pages.
 
-The options for this plugin are managed from the WordPress ‘Dashboard’ in the ‘Settings’ area, using the ‘jQuery Settings’ menu option within the ‘Settings’ area.
+The options for this plugin are managed from the WordPress ‘Dashboard’ in the ‘Settings’ area, using the ‘jQuery Options’ menu option within the ‘Settings’ area.
 
 
 == Plugin Options ==
@@ -82,11 +82,7 @@ When you enable the CDN option (recommended but disabled by default) a third par
 
 This plugin *always* sets the `crossorigin="anonymous"` attribute in association with the Third Party Service, which instructs the browser not to send cookies or any other authentication information to the third party when retrieving the resource.
 
-It is possible another plugin or your theme runs its own filter on the `jquery-core` or `jquery-migrate` script handles that results in that attribute no longer being set. Make sure to check by viewing the HTML output of a non-administrative frontend page.
-
 By default, the plugin will set the `integrity="[[expected base64 encoded hash]]"` attribute in association with the Third Party Service, which instruct the browser not to use the downloaded resource if the hatch does not match, protecting your users from trojans.
-
-The previously mentioned note about other plugins or themes running a filter on the `jquery-core` or `jquery-migrate` script handles applies here as well.
 
 This plugin uses the hashes associated with the files as provided by https://jquery.com/download/
 
@@ -190,12 +186,15 @@ Please note updates to this plugin with new versions of jQuery will not be pushe
 
 For the included jQuery Migrate plugin, I am less likely to notice when new versions are available but I do check whenever a new version of jQuery itself is released. Again you can bug me if needed.
 
-Development takes place on github. The `master` branch will usually be exactly the same as what is distributed through WordPress except it will have a small `README.md` file. The branch `pipjq` is where I develop and may not always be stable. When a new release ready *and tested* from the `pipjq` branch, it will be merged with `master` and then repacked for distribution through WordPress.
+Development takes place on github at https://github.com/pipfrosch/pipfrosch-jquery
+
+The `master` branch will usually be exactly the same as what is distributed through WordPress except it will have a small `README.md` file. The branch `pipjq` is where I develop and may not always be stable. When a new release ready *and tested* from the `pipjq` branch, it will be merged with `master` and then repacked for distribution through WordPress.
 
 Please use the distribution from WordPress rather than from github. The version from WordPress is audited by more eyes than my github.
 
 
 == Versioning Scheme ==
+
 Versions use an `Major.Minor.Tweak` scheme` using integers for each. Code in github may have a `pre` appended at the end to indicate is not a released version and should not be used on production systems.
 
 = Tweak bump =
@@ -271,7 +270,10 @@ You can also get them directly from the defined constants `PIPJQ_PLUGIN_VERSION`
 
 == Changelog ==
 
-= 1.2.0 ( Monday May 25, 2020 ) =
+= 1.2.1 (Thursday May 28, 2020) =
+* Show version of jQuery UI in Setting page if Pipfrosch jQuery UI is installed.
+
+= 1.2.0 (Monday May 25, 2020) =
 * define versions as options, run upgrade check.
 * type hinting on function output
 * fixed bug with dependencies
