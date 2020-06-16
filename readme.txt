@@ -278,7 +278,7 @@ You can also get them directly from the defined constants `PIPJQ_PLUGIN_VERSION`
 
 == Changelog ==
 
-= 1.2.1 (Monday June 01, 2020) =
+= 1.2.1 (Tuesday June 16, 2020) =
 * Show version of jQuery UI in Setting page if Pipfrosch jQuery UI is installed.
 * Fixed some documentation typos.
 
