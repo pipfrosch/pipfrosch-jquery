@@ -12,7 +12,8 @@ if ( ! defined( 'PIPJQ_PLUGIN_WEBPATH' ) ) { exit; }
  *  not set.
  *
  * @param string The name of the option to query.
- * @param bool   The default value to return and set if the option is not set.
+ * @param bool   Optional. Defaults to true.
+ *               The default value to return and set if the option is not set.
  *
  * @return bool
  */
@@ -100,34 +101,6 @@ function pipjq_get_cdnhost_option(): string
 }
 
 /**
- * Sanitize checkbox input.
- *
- * This plugin likes the faux boolean options set to be a string of "0" for false
- *  and "1" for true. The form sets a value a "1" when checked. If a string that
- *  evaluates as the integer 1 when recast to integer is supplied, this function
- *  will output the string "1". Any other value and it outputs the string "0".
- *
- * @param string|null The string passed to this callback from the WordPress options form
- *                    processing.
- *
- * @return string
- */
-function pipjq_sanitize_checkbox( $input ): string
-{
-  if ( ! is_string( $input ) ) {
-    $input = '';
-  }
-  $input = sanitize_text_field( $input );
-  if ( is_numeric( $input ) ) {
-    $num = intval( $input );
-    if ( $num === 1 ) {
-      return "1";
-    }
-  }
-  return "0";
-}
-
-/**
  * Initialize options
  *
  * This function makes sure the options are defined in the WordPress options
@@ -164,6 +137,29 @@ function pipjq_initialize_options(): void
 }
 
 /**
+ * Creates a .htaccess file for mod_expires
+ *
+ * @return void
+ */
+function pipjq_mod_expires(): void
+{
+  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
+  if ( file_exists( $htaccess ) ) {
+    // do not overwrite if already exists
+    return;
+  }
+  if ( is_writeable( dirname( $htaccess ) ) ) {
+    $contents  = '<IfModule mod_expires.c>' . PHP_EOL;
+    $contents .= '  ExpiresActive On' . PHP_EOL;
+    $contents .= '  <FilesMatch "\.min\.js">' . PHP_EOL;
+    $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
+    $contents .= '  </FilesMatch>' . PHP_EOL;
+    $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
+    file_put_contents( $htaccess, $contents );
+  }
+}
+
+/**
  * Upgrade check
  *
  * Callback to check to see if the installed version of plugin is an upgrade.
@@ -192,8 +188,8 @@ function pipjq_upgrade_check(): void
  *  instructs the client to download the copy served from the local website if it was
  *  not.
  *
- * @param bool When true, the HTML snippet is for testing the main jQuery library. When
- *             false, it is for testing the Migrate plugin.
+ * @param bool $core Optional. Defaults to true. When true, the HTML snippet is for
+ *             testing the main jQuery library. When false, it is for testing the Migrate plugin.
  *
  * @return string
  */
@@ -294,7 +290,7 @@ function pipjq_add_crossorigin_attribute( string $tag, string $handle, string $s
  *  an object with those strings as properties, and also a boolean property that
  *  specifies whether or not the `src` attributes are for a CDN.
  *
- * @param string The name of the CDN host.
+ * @param string $cdnhost Optional. Defaults to 'localhost'. The name of the CDN host.
  *
  * @return stdClass
  */
@@ -382,32 +378,38 @@ function pipjq_update_wpcore_jquery(): void
   }
 }
 
+/* For Settings API */
+
 /**
- * Creates a .htaccess file for mod_expires
+ * Sanitize checkbox input.
  *
- * @return void
+ * This plugin likes the faux boolean options set to be a string of "0" for false
+ *  and "1" for true. The form sets a value a "1" when checked. If a string that
+ *  evaluates as the integer 1 when recast to integer is supplied, this function
+ *  will output the string "1". Any other value and it outputs the string "0".
+ *
+ * @param mixed $input The string passed to this callback from the WordPress options
+ *                     form processing.
+ *
+ * @return string
  */
-function pipjq_mod_expires(): void
+function pipjq_sanitize_checkbox( $input ): string
 {
-  $htaccess = PIPJQ_PLUGIN_DIR . ".htaccess";
-  if ( file_exists( $htaccess ) ) {
-    // do not overwrite if already exists
-    return;
+  if ( is_bool( $input ) && $input ) {
+    return "1";
   }
-  if ( is_writeable( dirname( $htaccess ) ) ) {
-    $contents  = '<IfModule mod_expires.c>' . PHP_EOL;
-    $contents .= '  ExpiresActive On' . PHP_EOL;
-    $contents .= '  <FilesMatch "\.min\.js">' . PHP_EOL;
-    $contents .= '    ExpiresDefault "access plus 1 years"' . PHP_EOL;
-    $contents .= '  </FilesMatch>' . PHP_EOL;
-    $contents .= '</IfModule>' . PHP_EOL . PHP_EOL;
-    file_put_contents( $htaccess, $contents );
+  if ( ! is_string( $input ) ) {
+    return "0";
   }
+  $input = sanitize_text_field( $input );
+  if ( is_numeric( $input ) ) {
+    $num = intval( $input );
+    if ( $num === 1 ) {
+      return "1";
+    }
+  }
+  return "0";
 }
-
-/* functions specific to the WordPress Settings API */
-
-// the callback for add_settings_section
 
 /**
  * Settings form helpers
@@ -422,13 +424,11 @@ function pipjq_settings_form_text_helpers(): void
   $string  = PHP_EOL . '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   // Translators: Migrate is in reference to jQuery Migrate plugin
   $string .= ' <em>' . __( 'Use Migrate Plugin', 'pipfrosch-jquery' ) . '</em> ';
-  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
-  echo ( $string );
-  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.<br />' . PHP_EOL;
+  $string .= __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   $string .= ' <em>' . __( 'Use Content Distribution Network', 'pipfrosch-jquery' ) . '</em> ';
-  $string .= __( 'option', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
-  echo ( $string );
-  $string  = '<p>' . __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
+  $string .= __( 'option', 'pipfrosch-jquery' ) . '.<br />' . PHP_EOL;
+  $string .= __( 'It is recommended that you enable the', 'pipfrosch-jquery' );
   $string .= ' <em>' . __( 'Use Subresource Integrity', 'pipfrosch-jquery' ) . '</em> ';
   $string .= __( 'option (default)', 'pipfrosch-jquery' ) . '.</p>' . PHP_EOL;
   echo ( $string );
@@ -529,10 +529,13 @@ function pipjq_options_page_form(): void
   $r = array( '<abbr>CDN</abbr>' , '<abbr>CDNJS</abbr>' );
   $cdnhost = preg_replace($s, $r, $cdnhost);
   $html  = '    <h2>Pipfrosch jQuery ' . __('Plugin Management', 'pipfrosch-jquery') . '</h2>' . PHP_EOL;
-  $html .= '    <p>jQuery ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQV . '</p>' . PHP_EOL;
+  $html .= '    <p>jQuery ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQV . '<br />' . PHP_EOL;
   // Translators: Migrate is in reference to jQuery Migrate plugin
-  $html .= '    <p>jQuery ' . __( 'Migrate Plugin Version', 'pipfrosch-jquery') . ': ' . PIPJQMIGRATE . '</p>' . PHP_EOL;
-  $html .= '    <p>' . __( 'Current', '') . ' <abbr title="' . esc_attr__( 'Content Distribution Network' , 'pipfrosch-jquery');
+  $html .= 'jQuery ' . __( 'Migrate Plugin Version', 'pipfrosch-jquery') . ': ' . PIPJQMIGRATE . '<br />' . PHP_EOL;
+  if ( defined( 'PIPJQUIV' ) ) {
+    $html .= 'jQuery UI ' . __( 'Version', 'pipfrosch-jquery') . ': ' . PIPJQUIV . '<br />' . PHP_EOL;
+  }
+  $html .= __( 'Current', '') . ' <abbr title="' . esc_attr__( 'Content Distribution Network' , 'pipfrosch-jquery');
   $html .= '">CDN</abbr>: ' . $cdnhost . ' ' . $parenthesis . '</p>' . PHP_EOL;
   $html .= '    <form method="post" action="options.php">' . PHP_EOL;
   echo $html;
@@ -571,7 +574,7 @@ function pipjq_register_settings(): void
                     array( 'sanitize_callback' => 'pipjq_sanitize_cdnhost' ) );
 
   add_settings_section( PIPJQ_SECTION_SLUG_NAME,
-                        'Plugin Options',
+                        'jQuery Core Options',
                         'pipjq_settings_form_text_helpers',
                         PIPJQ_SETTINGS_PAGE_SLUG_NAME );
 

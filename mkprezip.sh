@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# WARNING - this packages what is in the development branch
+#  and is intended only for testing purposes.
+#
+# Use mkzip.sh to package for production, or better yet,
+#  install from WordPress.
+
 # creates a zip archive from master from github.
 
 CWD=`pwd`
@@ -11,6 +17,7 @@ pushd ${DIR}
 git clone https://github.com/pipfrosch/pipfrosch-jquery.git
 
 cd pipfrosch-jquery
+git checkout pipjq
 
 # git specific file / directory
 rm -f .gitignore

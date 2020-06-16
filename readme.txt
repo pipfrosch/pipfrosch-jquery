@@ -14,15 +14,15 @@ Use jQuery 3.5.1 and jQuery Migrate 3.3.0 with your WordPress powered website wi
 
 == Description ==
 
-The jQuery that current ships as part of WordPress is (as of WP 5.4.1) an older version of jQuery. As in ancient. This plugin allows you to instead use a much more modern of jQuery, with optional compatibility for scripts that need the older jQuery calls.
+The jQuery that current ships as part of WordPress is (as of WP 5.4.1) an older version of jQuery. As in ancient. This plugin allows you to instead use a much more modern version of jQuery, with optional compatibility for scripts that need the older jQuery calls.
 
-This plugin also optionally allows you to securely select a public CDN for jQuery including the appropriate Subresource Integrity (SRI) and CrossOrigin attributes. Using a CDN can speed up the loading of your website as there is a good chance a client visiting your website already has the identical file in their browser cache and does not need to fetch it again.
+This plugin also optionally allows you to securely select a public CDN for jQuery, including the appropriate Subresource Integrity (SRI) and CrossOrigin attributes. Using a CDN can speed up the loading of your website as there is a good chance a client visiting your website already has the identical file in their browser cache and does not need to fetch it again.
 
 When a CDN is used, a small amount of code is added to your pages to provide a fallback where jQuery and the jQuery Migrate plugin are served from your site if either the CDN can not be reached by the client or if the SRI check fails.
 
 The updated jQuery will not replace the core jQuery for administration pages. This is to avoid potential breakage of administrative pages.
 
-The options for this plugin are managed from the WordPress ‘Dashboard’ in the ‘Settings’ area, using the ‘jQuery Settings’ menu option within the ‘Settings’ area.
+The options for this plugin are managed from the WordPress ‘Dashboard’ in the ‘Settings’ area, using the ‘jQuery Options’ menu option within the ‘Settings’ area.
 
 
 == Plugin Options ==
@@ -35,17 +35,19 @@ Enabled by default.
 
 You may disable compatibility with scripts that require older versions of jQuery. This is not recommended.
 
-The jQuery Migrate plugin provides compatibility with jQuery 1.9 through 3.0. It is enabled by default and provides compatibility with the version of jQuery that currently (WP 5.4.1) ships in WordPress, which is version jQuery 1.12.4.
+The jQuery Migrate plugin provides compatibility with jQuery 1.9 through 3.0. It is enabled by default and provides compatibility with the version of jQuery that currently (WP 5.4.1) ships in WordPress, which is jQuery version 1.12.4.
 
 Scripts written to use the version of jQuery that ships with WordPress may be registered with a dependency of `jquery-core` but use functions that are no longer supported in jQuery 3.5.1. When ‘Use Migrate Plugin’ is enabled, scripts that are registered with a dependency of `jquery-core` will trigger enqueuing of the Migrate plugin so that those scripts written for the older jQuery will still work. When ‘Use Migrate Plugin’ is disabled, then enqueuing of the Migrate plugin will only happen if scripts explicitly specify `jquery-migrate` or `jquery` as a dependency.
 
 If some jQuery scripts break even with ‘Use Migrate Plugin’ enabled, they are likely written for jQuery prior to version 1.9. The only option in that case is to not use this plugin until you have upgraded that very old code.
 
-It is highly recommended you update that code as soon as possible, whether or not you plan to use this plugin.
+It is highly recommended you update such old code as soon as possible, whether or not you plan to use this plugin.
+
+= Note =
 
 Please note that WordPress has provided jQuery for years, this results in many plugins and themes using jQuery out of convenience when they really did not need to.
 
-Rumor is that a future release of WordPress may only use native JavaScript for everything in WP Core. If hiring a JavaScript developer to update old jQuery code, make sure the JavaScript developer is wise enough to know when porting the code to native JavaScript makes more sense than continuing to use jQuery and when using jQuery really is the best approach. In other words, do not hire someone like me, I pretty much only use jQuery but that is admittedly not always the best approach, just the convenient approach.
+Rumor is that a future release of WordPress may only use native JavaScript for everything JavaScript in WP Core. If hiring a JavaScript developer to update old jQuery code, make sure the JavaScript developer is wise enough to know when porting the code to native JavaScript makes more sense than continuing to use jQuery and when using jQuery really is the best approach. In other words, do not hire someone like me, I pretty much only use jQuery but that is admittedly not always the best approach, just the convenient approach.
 
 = ‘Use Content Distribution Network’ option =
 
@@ -53,7 +55,7 @@ Disabled by default.
 
 By default, the updated jQuery scripts are served from within this WordPress plugin. This is because responsible plugin and theme developers do not (in my opinion) utilize third party resources by default.
 
-I recommend you enable this option however doing so will result in frontend pages being served that reference a Third Party Resource. Links to those services and their privacy policies follows the section on Plugin Options.
+I recommend you enable this option however doing so will result in front-end pages being served that reference a Third Party Resource. Links to those services and their privacy policies follows the section on Plugin Options.
 
 = ‘Use Subresource Integrity’ option =
 
@@ -78,17 +80,13 @@ For many websites, the default ‘jQuery.com CDN’ is *probably* the best choic
 
 == External Third Party Services ==
 
-When you enable the CDN option (recommended but disabled by default) a third party service will be used. You should make sure your website Privacy Policy makes users are aware of this. In the current version of WordPress (WP 5.4.1), the default Privacy Policy does make users aware of this, but you have to actually publish that policy and you should check it yourself in case it has been modified or in case the policy you have predates that policy and does not include a Third Party Resource notice.
+When you enable the CDN option (recommended but disabled by default) a third party service will be used. You should make sure your website Privacy Policy makes users are aware of this. In the current version of WordPress (WP 5.4.1), the default Privacy Policy does make users aware that third party resources may be used, but you have to actually publish that policy and you should check it yourself in case it has been modified or in case the policy you have predates the current default policy and does not include a Third Party Resource notice.
 
-This plugin *always* sets the `crossorigin="anonymous"` attribute in association with the Third Party Service, which instructs the browser not to send cookies or any other authentication information to the third party when retrieving the resource.
+This plugin *always* sets the `crossorigin="anonymous"` attribute in association with the Third Party Service. This attribute instructs the browser not to send cookies or any other authentication information to the third party when retrieving the resource. Most modern browsers respect this attribute but some may not.
 
-It is possible another plugin or your theme runs its own filter on the `jquery-core` or `jquery-migrate` script handles that results in that attribute no longer being set. Make sure to check by viewing the HTML output of a non-administrative frontend page.
+By default, the plugin will set the `integrity="[[expected base64 encoded hash]]"` attribute in association with the Third Party Service. This instruct the browser not to use the downloaded resource if the hash does not match, protecting your users from possible trojans.
 
-By default, the plugin will set the `integrity="[[expected base64 encoded hash]]"` attribute in association with the Third Party Service, which instruct the browser not to use the downloaded resource if the hatch does not match, protecting your users from trojans.
-
-The previously mentioned note about other plugins or themes running a filter on the `jquery-core` or `jquery-migrate` script handles applies here as well.
-
-This plugin uses the hashes associated with the files as provided by https://jquery.com/download/
+For SRI, this plugin uses the hashes associated with the files as provided by https://jquery.com/download/ with one exception (see the Hard-coded SRI Hashes section of this readme).
 
 These are the potential third party services:
 
@@ -157,7 +155,7 @@ Click on the minified link for the same version of jQuery Migrate (3.3.0) and a 
 
 = CloudFlare CDNJS and jdDeliver CDN =
 
-The minified jQuery Migrate plugin hosted at CloudFlare CDNJS and jsDelivr CDN have the following addition at the end of the JS file:
+The minified jQuery Migrate plugin hosted at CloudFlare CDNJS and jsDelivr CDN have the following addition at the end of the JS file that cause their hash to be different:
 
     //# sourceMappingURL=jquery-migrate.min.map
 
@@ -170,7 +168,7 @@ Mouse over the minified version and from the menu that appears select *Copy SRI*
 
 == Public CDN Notes ==
 
-As of May 20th, 2020 the following notes apply.
+As of May 28th, 2020 the following notes apply.
 
 The Microsoft CDN does not yet have current versions of either the core jQuery library or the Migrate plugin. If you select that CDN, the files will be served from your host until the Microsoft CDN has them.
 
@@ -179,24 +177,29 @@ The Google CDN does not host any version of the jQuery Migrate plugin. If you se
 
 == Plugin / Theme Compatibility ==
 
-This plugin does not set the version for jQuery. Doing so greatly reduces the odds that a browser will recognize it already has the scripts cached. Some plugins and themes may query for the version of jQuery being used. They should not do that, but some do. They will not get an answer if this plugin has run before they run and they will get the wrong answer if they run before this script has run.
+This plugin does not set the version for jQuery when registering the script. Unfortunately when registering a script with a version in WordPress, it always applies the query tag `?ver=whatever` to the end of the resource and doing so with a CDN greatly reduces the odds that a browser will recognize it already has the scripts cached. Some plugins and themes may query for the version of jQuery being used. They should not do so, but some do. They will not get an answer if this plugin has run before they run and they will get the wrong answer if they run before this script has run.
+
+jQuery scripts that depend upon certain versions should query for the capability within the JavaScript rather than depending upon a version specified to WordPress which may not always reflect what is actually served.
 
 
 == Update Policy ==
 
 I will try to update this plugin when new versions of jQuery are released but it may not be as fast as some may like. You can bug me by leaving sending an e-mail to pipfroshpress[AT]gmail[DOT]com.
 
-Please note updates to this plugin with new versions of jQuery will not be pushed until that majority of the supported CDNs have the file.
+Please note updates to this plugin with new versions of jQuery will not be pushed until that majority of the supported CDNs have the file. New versions also will not be published if the accompanying Migrate plugin does not give support for scripts written for jQuery 1.12.4.
 
 For the included jQuery Migrate plugin, I am less likely to notice when new versions are available but I do check whenever a new version of jQuery itself is released. Again you can bug me if needed.
 
-Development takes place on github. The `master` branch will usually be exactly the same as what is distributed through WordPress except it will have a small `README.md` file. The branch `pipjq` is where I develop and may not always be stable. When a new release ready *and tested* from the `pipjq` branch, it will be merged with `master` and then repacked for distribution through WordPress.
+Development takes place on github at https://github.com/pipfrosch/pipfrosch-jquery
 
-Please use the distribution from WordPress rather than from github. The version from WordPress is audited by more eyes than my github.
+The `master` branch will usually be exactly the same as what is distributed through WordPress except it will have a small `README.md` file. The branch `pipjq` is where I develop and what is in that branch may not always be stable. When a new release is ready *and tested* from the `pipjq` branch, it will be merged with `master` and then repacked for distribution through the WordPress SVN.
+
+Please use the distribution from WordPress rather than from github unless you are testing. The version from WordPress is audited by more eyes than my github.
 
 
 == Versioning Scheme ==
-Versions use an `Major.Minor.Tweak` scheme` using integers for each. Code in github may have a `pre` appended at the end to indicate is not a released version and should not be used on production systems.
+
+Versions use the standard `Major.Minor.Tweak` scheme using integers for each. Code in my github may have a `pre` appended at the end to indicate is not a released version and should not be used on production systems.
 
 = Tweak bump =
 
@@ -229,7 +232,7 @@ Only you can answer that question. The reason why I chose to write this plugin i
 
 If those issues do not concern you then maybe a different plugin addresses the issues that do concern you better than this one does.
 
-For example, this plugin only provides for one version of jQuery and does not provide other jQuery plugins such as jQuery UI. If those are important to you then use a different plugin (or fork this one).
+For example, this plugin only provides for one version of jQuery and does not provide other jQuery plugins. If those are important to you then use a different plugin (or fork this one).
 
 It is *possible* I may create additional WordPress plugins for the more commonly used jQuery plugins in the future as options but that has to be carefully done to make sure the `$handle` argument to `wp_enqueue_script()` matches what is expected by themes and plugins that want the jQuery plugin.
 
@@ -240,6 +243,10 @@ No. It is *possible* that some versions of WordPress and *probable* that some pl
 = Why does this plugin require PHP 7 or newer? =
 
 I have neither the financial means nor the will-power to set up a testing environment suitable for testing with versions of PHP that no one should still be using anyway.
+
+PHP 7 also allows me to specify type hints for input parameters and function output, making it easier to port this plugin to php strict typing mode should WordPress ever move in that direction (as I hope it eventually does).
+
+Please use at least PHP 7.2 if you can for reasons unrelated to this plugin.
 
 = Why do I still sometimes see requests for jQuery in my server access log? =
 
@@ -271,7 +278,11 @@ You can also get them directly from the defined constants `PIPJQ_PLUGIN_VERSION`
 
 == Changelog ==
 
-= 1.2.0 ( Monday May 25, 2020 ) =
+= 1.2.1 (Tuesday June 16, 2020) =
+* Show version of jQuery UI in Setting page if Pipfrosch jQuery UI is installed.
+* Fixed some documentation typos.
+
+= 1.2.0 (Monday May 25, 2020) =
 * define versions as options, run upgrade check.
 * type hinting on function output
 * fixed bug with dependencies
