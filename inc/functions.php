@@ -12,7 +12,8 @@ if ( ! defined( 'PIPJQ_PLUGIN_WEBPATH' ) ) { exit; }
  *  not set.
  *
  * @param string The name of the option to query.
- * @param bool   The default value to return and set if the option is not set.
+ * @param bool   Optional. Defaults to true.
+ *               The default value to return and set if the option is not set.
  *
  * @return bool
  */
@@ -187,8 +188,8 @@ function pipjq_upgrade_check(): void
  *  instructs the client to download the copy served from the local website if it was
  *  not.
  *
- * @param bool When true, the HTML snippet is for testing the main jQuery library. When
- *             false, it is for testing the Migrate plugin.
+ * @param bool $core Optional. Defaults to true. When true, the HTML snippet is for
+ *             testing the main jQuery library. When false, it is for testing the Migrate plugin.
  *
  * @return string
  */
@@ -289,7 +290,7 @@ function pipjq_add_crossorigin_attribute( string $tag, string $handle, string $s
  *  an object with those strings as properties, and also a boolean property that
  *  specifies whether or not the `src` attributes are for a CDN.
  *
- * @param string The name of the CDN host.
+ * @param string $cdnhost Optional. Defaults to 'localhost'. The name of the CDN host.
  *
  * @return stdClass
  */
@@ -387,8 +388,8 @@ function pipjq_update_wpcore_jquery(): void
  *  evaluates as the integer 1 when recast to integer is supplied, this function
  *  will output the string "1". Any other value and it outputs the string "0".
  *
- * @param mixed The string passed to this callback from the WordPress options form
- *              processing.
+ * @param mixed $input The string passed to this callback from the WordPress options
+ *                     form processing.
  *
  * @return string
  */
