@@ -38,3 +38,19 @@ Plugin Details
 --------------
 
 See the `readme.txt` file. This `README.md` is for the github project.
+
+
+Note to Self
+------------
+
+This is a note to myself so I do not have to keep looking up how to do it.
+
+After pull request to master and tagging release, do the following:
+
+    git checkout master
+    git pull
+    git checkout pipjq
+    git merge master
+    git push
+
+That will bring pipjq up to date with master so devel can continue on it.
