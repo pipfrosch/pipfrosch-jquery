@@ -24,6 +24,7 @@ rm -f .gitignore
 rm -rf .git
 # These two files are not needed in packaged plugin
 rm -f mkzip.sh
+rm -f mkprezip.sh
 rm -f README.md
 
 VERSION=`grep "Version:" pipfrosch-jquery.php |head -1 |cut -d':' -f2 |tr -d '[:space:]'`
